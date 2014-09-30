@@ -1,0 +1,8 @@
+~Prog_001~
+
+// Premier Programme analyser avec la grammaire CPYYR 
+// Ne fait strictement rien
+
+begin
+	vide;
+end

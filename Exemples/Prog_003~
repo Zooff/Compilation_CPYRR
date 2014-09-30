@@ -1,0 +1,10 @@
+~Prog_003~
+
+type tab : array [1..5,1..5] of int;
+
+var x : tab;
+var y : tab;
+
+begin
+	x[y[2,5].f(x),3] := 2;
+end

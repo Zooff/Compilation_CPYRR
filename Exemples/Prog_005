@@ -1,0 +1,17 @@
+~Prog_005~
+//Exemple de déclaration de procédures
+
+proc maProc (x : int ; y : int)
+begin
+	x := x + 1;
+	y := y - 1;
+	proc maProc2 (a : float ; b : float)
+	var c : float;
+	begin
+		c := a * b;
+	end;
+end;
+
+begin
+	vide;
+end

@@ -1,0 +1,13 @@
+~Prog_002~
+
+var i : int;
+var c : char;
+var b : bool;
+var s : string[5];
+
+begin
+	i := 2;
+	c := 'c';
+	b := true;
+	s := aaaaa;
+end

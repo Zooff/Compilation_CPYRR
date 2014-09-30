@@ -1,0 +1,20 @@
+~Prog_008~
+//Exemple d'utilisation de la condition TANT QUE
+
+var a : int;
+var b : int;
+
+begin
+	while (a != 10) do
+	begin
+		a := a + 1;
+		if (a == 5 || a == 7) then
+		begin
+			b := b * 2;
+		end
+		else
+		begin
+			vide;
+		end;
+	end;
+end

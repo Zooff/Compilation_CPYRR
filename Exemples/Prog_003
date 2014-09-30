@@ -1,0 +1,13 @@
+~Prog_003~
+
+/* blabla */
+
+type tab : array [1..5,1..5] of int;
+
+var x : tab;
+var y : tab;
+
+begin
+	x[y[2,5],3] := 2;
+	c.a[f(x),3].A[2.3] := 0;
+end

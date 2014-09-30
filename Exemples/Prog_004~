@@ -1,0 +1,11 @@
+~Prog_004~
+//Exemple sur l'initialisation de structures
+
+type maStruct : struct 
+x : int;
+y : int;
+fstruct;
+
+begin
+	vide;
+end
