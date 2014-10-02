@@ -20,4 +20,4 @@ lex.yy.c: $(FIC_FLEX).l
 	flex $(FIC_FLEX).l
 
 clean:
-	 rm -r $(FIC_BISON).tab.c $(FIC_BISON).tab.h $(FIC_BISON).output lex.yy.c compilateur
+	 rm -r $(FIC_BISON).tab.c $(FIC_BISON).tab.h lex.yy.c

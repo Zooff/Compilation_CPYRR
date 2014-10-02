@@ -1,0 +1,31 @@
+~factorielle~
+
+/* Hate de tester se prgm avec un compilateur fonctionnel */
+
+/* Fonction qui prend un int en paramètre et qui retourne ca factorielle */
+
+function factorielle(n : int) return int
+
+	 var fact, i : int;
+	 begin
+		fact := 1;
+		i := 1;
+		while (i < n) do
+		      begin
+			fact = fact * i;
+		      end
+		
+		return fact;
+	end
+
+var i : int;
+
+begin
+
+	read(i);
+	factorielle(i);
+	write(" resultat : %d ", factorielle(i));
+
+end
+		
+		
