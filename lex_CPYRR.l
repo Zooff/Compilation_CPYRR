@@ -46,7 +46,7 @@ var {return(VARIABLE);}
 
 proc {return(PROCEDURE);}
 function {return(FONCTION);}
-"return" {return(RETOURNE);}
+return {return(RETOURNE);}
 
 vide {return(VIDE);}
 

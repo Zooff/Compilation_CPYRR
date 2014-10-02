@@ -7,6 +7,9 @@ x : int;
 y : int;
 fstruct;
 
+var point : maStruct;
+
 begin
-	vide;
+	point.x := 2;
+	point.y := 0;
 end

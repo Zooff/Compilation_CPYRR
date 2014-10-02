@@ -1,6 +1,6 @@
 ~Prog_003~
 
-/* blabla */
+/* Test incompréhensible qui ne sert a rien */
 
 type tab : array [1..5,1..5] of int;
 

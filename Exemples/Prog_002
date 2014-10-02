@@ -1,11 +1,19 @@
 ~Prog_002~
 
+/* Prog_OO2 : Declaration et affectation de variable de type simple */
+
+
+// Déclaration 
+
 var i : int;
-var c : char;
+var c : char;  
 var b : bool;
 var s : string[5];
 
 begin
+
+// Affectation
+
 	i := 2;
 	c := 'c';
 	b := true;

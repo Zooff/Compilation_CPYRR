@@ -1,17 +1,23 @@
 ~Prog_005~
-//Exemple de déclaration de procédures
+
+~ Exemple de déclaration de procédures
 
 proc maProc (x : int ; y : int)
 begin
 	x := x + 1;
 	y := y - 1;
+	
+	// Déclaration d'une procédure dans une procédure... On se tate a le laisser
+	
 	proc maProc2 (a : float ; b : float)
-	var c : float;
-	begin
+	     var c : float;
+	     begin
 		c := a * b;
-	end;
+	     end;
+
+	maProc2(x,y);
 end;
 
 begin
-	vide;
+	maProc(2,3);
 end

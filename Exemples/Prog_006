@@ -1,16 +1,23 @@
 ~Prog_006~
+
 //Exemple d'utilisation de fonction
 
 function maFonction (x : int ; y : int) return int
 begin
 	x := x + 2;
 	y := x + y;
-	function maFonction2 (a : float ; b : float) return float
-	var c : float;
-	begin
-		c := a / b;
-	end;
+
+	return x;
+
 end;
+
+function maFonction2 (a : float ; b : float) return float
+var c : float;
+begin	
+	 c := a / b;
+	 return c;
+end;
+
 
 var a : int;
 var b : int;
