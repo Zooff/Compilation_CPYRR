@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "xmalloc.h"
+
+
+typedef struct noeud {
+
+  char * nature;
+  int numlex;
+  int numdecl;
+  struct noeud * frere;
+  struct noeud * fils;
+
+} noeud;
+
+typedef struct noeud * arbre;
+
+
+noeud creer_node(char * chaine){
+  
+  arbre node;
+  node = xmalloc(1, sizeof(noeud));
+  
+  

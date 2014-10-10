@@ -86,7 +86,7 @@ vide {return(VIDE);}
                                                ++nb_ligne;
                                                };
 \/\/.* ;
-\~.* ;
+\"\"~.* ;
 
 "\n" {nb_ligne++ ;}
 
