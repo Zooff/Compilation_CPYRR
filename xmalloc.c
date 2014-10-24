@@ -5,9 +5,9 @@
 
 
 void * xmalloc(size_t nbbloc, size_t tailleob){
-  
+
   void* pt;
-  
+
   pt = malloc(nbbloc * tailleob);
 
   if (pt == NULL){
