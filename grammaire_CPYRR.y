@@ -2,7 +2,24 @@
 /*        Auteur : Dimitri ESCALLE DA COSTA VAZ Julien NAIDJI Nabil         */
 /* Contient la grammaire neccesaire au bon fonctionnement du langages CPYRR */
 
+%{
 
+#include "include.h"
+
+
+/* Variable table lexicographique */
+
+structlexhc tablelexico[MAX];
+int lexhashtab[31];
+int numlex=4;
+
+/* ------- ------ */
+
+
+
+int nb_region = 1;
+
+%}
 
 
 
@@ -34,8 +51,8 @@
 %token TABLEAU DE
 %token STRUCT FSTRUCT
 
-%token PROG DEBUT FIN 
-%token TYPE VARIABLE 
+%token PROG DEBUT FIN
+%token TYPE VARIABLE
 
 %token PROCEDURE FONCTION RETOURNE
 
@@ -151,12 +168,12 @@ type_simple : ENTIER
 
 /* ----------- */
 
-declaration_variable : VARIABLE liste_IDF DP nom_type 
+declaration_variable : VARIABLE liste_IDF DP nom_type
                      ;
 
-liste_IDF : IDF 
+liste_IDF : IDF
           | liste_IDF VIRG IDF
-          ; 
+          ;
 
 /* FONCTION/PROCEDURE */
 
@@ -225,7 +242,7 @@ tant_que : TANT_QUE PO expression PF FAIRE liste_instructions
 
 /* AFFECTATION */
 
-affectation : variable OPAFF expression 
+affectation : variable OPAFF expression
             ;
 
                                   /* A définir */
@@ -235,12 +252,12 @@ affectation : variable OPAFF expression
 
 
 
-variable : IDF CO liste_var CF var 
+variable : IDF CO liste_var CF var
          | IDF var
          ;
 
 liste_var : expression
-          | liste_var VIRG expression 
+          | liste_var VIRG expression
           ;
 
 var : P variable
@@ -251,7 +268,7 @@ var : P variable
 
 /* EXPRESSION */
 
-expression : expression ET exp 
+expression : expression ET exp
            | expression OU exp
            | exp
            ;

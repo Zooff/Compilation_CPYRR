@@ -1,4 +1,8 @@
 
+#ifndef LEXTAB
+#define LEXTAB
+
+#include "../include.h"
 
 
 
@@ -31,5 +35,4 @@ void affiche_lexhashtab(int tab[]);//fonction qui afiche la table de hashcode
 
 
 
-
-
+#endif

@@ -6,7 +6,7 @@
 #define ARBRE
 
 
-
+#include "include.h"
 #include "xmalloc.h"
 
 /* Operateur */
@@ -15,7 +15,7 @@
 #define AA_MOINS 1
 #define AA_MULT 2
 #define AA_DIV 3
-#define MOD 4
+#define AA_MOD 4
 
 /* Comparateur */
 
