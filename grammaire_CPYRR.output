@@ -44,10 +44,10 @@ Grammaire
    27            | CARACTERE
    28            | CHAINE CO CSTE_ENTIERE CF
 
-   29 declaration_variable: VARIABLE liste_IDF DP nom_type
+   29 declaration_variable: VARIABLE decla_suite_var
 
-   30 liste_IDF: IDF
-   31          | liste_IDF VIRG IDF
+   30 decla_suite_var: IDF DP nom_type
+   31                | IDF VIRG decla_suite_var
 
    32 declaration_procedure: PROCEDURE IDF liste_parametres corps
 
@@ -148,7 +148,7 @@ $end (0) 0
 error (256)
 PV (258) 4 5 7 8 19 20 37
 PP (259) 18
-DP (260) 13 14 21 29 38
+DP (260) 13 14 21 30 38
 VIRG (261) 17 31 53 61 92 95
 PO (262) 34 35 50 51 56 76 90 91
 PF (263) 34 35 50 51 56 76 90 91
@@ -231,12 +231,12 @@ liste_champs (68)
 un_champ (69)
     à gauche: 21, à droite: 19 20
 nom_type (70)
-    à gauche: 22 23, à droite: 14 21 29
+    à gauche: 22 23, à droite: 14 21 30
 type_simple (71)
     à gauche: 24 25 26 27 28, à droite: 22 33 38
 declaration_variable (72)
     à gauche: 29, à droite: 10
-liste_IDF (73)
+decla_suite_var (73)
     à gauche: 30 31, à droite: 29 31
 declaration_procedure (74)
     à gauche: 32, à droite: 11 42
@@ -364,11 +364,11 @@ liste_variables (100)
 
 État 5
 
-   29 declaration_variable: VARIABLE . liste_IDF DP nom_type
+   29 declaration_variable: VARIABLE . decla_suite_var
 
     IDF  décalage et aller à l'état 34
 
-    liste_IDF  aller à l'état 35
+    decla_suite_var  aller à l'état 35
 
 
 État 6
@@ -640,18 +640,18 @@ liste_variables (100)
 
 État 34
 
-   30 liste_IDF: IDF .
+   30 decla_suite_var: IDF . DP nom_type
+   31                | IDF . VIRG decla_suite_var
 
-    $défaut  réduction par utilisation de la règle 30 (liste_IDF)
+    DP    décalage et aller à l'état 69
+    VIRG  décalage et aller à l'état 70
 
 
 État 35
 
-   29 declaration_variable: VARIABLE liste_IDF . DP nom_type
-   31 liste_IDF: liste_IDF . VIRG IDF
+   29 declaration_variable: VARIABLE decla_suite_var .
 
-    DP    décalage et aller à l'état 69
-    VIRG  décalage et aller à l'état 70
+    $défaut  réduction par utilisation de la règle 29 (declaration_variable)
 
 
 État 36
@@ -1006,7 +1006,7 @@ liste_variables (100)
 
 État 69
 
-   29 declaration_variable: VARIABLE liste_IDF DP . nom_type
+   30 decla_suite_var: IDF DP . nom_type
 
     ENTIER     décalage et aller à l'état 108
     REEL       décalage et aller à l'état 109
@@ -1021,9 +1021,11 @@ liste_variables (100)
 
 État 70
 
-   31 liste_IDF: liste_IDF VIRG . IDF
+   31 decla_suite_var: IDF VIRG . decla_suite_var
 
-    IDF  décalage et aller à l'état 116
+    IDF  décalage et aller à l'état 34
+
+    decla_suite_var  aller à l'état 116
 
 
 État 71
@@ -1483,9 +1485,9 @@ liste_variables (100)
 
 État 114
 
-   29 declaration_variable: VARIABLE liste_IDF DP nom_type .
+   30 decla_suite_var: IDF DP nom_type .
 
-    $défaut  réduction par utilisation de la règle 29 (declaration_variable)
+    $défaut  réduction par utilisation de la règle 30 (decla_suite_var)
 
 
 État 115
@@ -1497,9 +1499,9 @@ liste_variables (100)
 
 État 116
 
-   31 liste_IDF: liste_IDF VIRG IDF .
+   31 decla_suite_var: IDF VIRG decla_suite_var .
 
-    $défaut  réduction par utilisation de la règle 31 (liste_IDF)
+    $défaut  réduction par utilisation de la règle 31 (decla_suite_var)
 
 
 État 117

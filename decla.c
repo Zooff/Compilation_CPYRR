@@ -1,16 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "decla.h"
 
-#define TBASE 0
-#define STRUCT 1
-#define TAB 2
-#define VAR 3
-#define PROC 4
-#define FONCT 5
 
-#define DECLARATION_MAX 10000
-#define DEBUT_DEBORDEMENT 8000
 
 
 TabDecla tabDecla[DECLARATION_MAX];
@@ -19,13 +10,13 @@ int numRegion = 1;
 int positionDebordement = DEBUT_DEBORDEMENT;
 
 
-void initTab()
+void initTabDecla()
 {
   int i;
 
   for(i=0 ; i<=3 ; i++)
     {
-      tabDecla[i].nature = TBASE;
+      tabDecla[i].nature = TD_TBASE;
       tabDecla[i].suivant = -1;
       tabDecla[i].region = 1;
       tabDecla[i].description = -1;
@@ -43,17 +34,17 @@ void initTab()
 }
 
 
-void ajouterDeclaStruct(int numLexico)
+int ajouterDeclaStruct(int numLexico)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
       printf("Erreur, plus de mémoire disponible !\n");
-      exit(-1);
+      return (-1);
     }
-  
+
   if(tabDecla[numLexico].nature == -1)
     {
-      tabDecla[numLexico].nature = STRUCT;
+      tabDecla[numLexico].nature = TD_STRUCT;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
       nbDecla++;
@@ -62,17 +53,18 @@ void ajouterDeclaStruct(int numLexico)
     {
       while(tabDecla[numLexico].suivant != -1)
 	numLexico = tabDecla[numLexico].suivant;
-	
+
       tabDecla[numLexico].suivant = positionDebordement;
-      tabDecla[positionDebordement].nature = STRUCT;
+      tabDecla[positionDebordement].nature = TD_STRUCT;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
-      positionDebordement++;	
+      positionDebordement++;
     }
+    return 0;
 }
 
 
-void ajouterDeclaTab(int numLexico)
+int ajouterDeclaTab(int numLexico)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
@@ -82,7 +74,7 @@ void ajouterDeclaTab(int numLexico)
 
   if(tabDecla[numLexico].nature == -1)
     {
-      tabDecla[numLexico].nature = TAB;
+      tabDecla[numLexico].nature = TD_TAB;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
       nbDecla++;
@@ -91,27 +83,28 @@ void ajouterDeclaTab(int numLexico)
     {
       while(tabDecla[numLexico].suivant != -1)
 	numLexico = tabDecla[numLexico].suivant;
-	
+
       tabDecla[numLexico].suivant = positionDebordement;
-      tabDecla[positionDebordement].nature = TAB;
+      tabDecla[positionDebordement].nature = TD_TAB;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
-      positionDebordement++;	
+      positionDebordement++;
     }
+    return 0;
 }
 
 
-void ajouterDeclaVar(int numLexico)
+int ajouterDeclaVar(int numLexico)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
       printf("Erreur, plus de mémoire disponible !\n");
-      exit(-1);
+      return (-1);
     }
 
   if(tabDecla[numLexico].nature == -1)
     {
-      tabDecla[numLexico].nature = VAR;
+      tabDecla[numLexico].nature = TD_VAR;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
       nbDecla++;
@@ -119,28 +112,29 @@ void ajouterDeclaVar(int numLexico)
   else
     {
       while(tabDecla[numLexico].suivant != -1)
-	numLexico = tabDecla[numLexico].suivant;
-	
+        numLexico = tabDecla[numLexico].suivant;
+
       tabDecla[numLexico].suivant = positionDebordement;
-      tabDecla[positionDebordement].nature = VAR;
+      tabDecla[positionDebordement].nature = TD_VAR;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
-      positionDebordement++;	
+      positionDebordement++;
     }
+    return 0;
 }
 
 
-void ajouterDeclaProc(int numLexico)
+int ajouterDeclaProc(int numLexico)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
       printf("Erreur, plus de mémoire disponible !\n");
-      exit(-1);
+      return (-1);
     }
 
   if(tabDecla[numLexico].nature == -1)
     {
-      tabDecla[numLexico].nature = PROC;
+      tabDecla[numLexico].nature = TD_PROC;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
       nbDecla++;
@@ -149,27 +143,28 @@ void ajouterDeclaProc(int numLexico)
     {
       while(tabDecla[numLexico].suivant != -1)
 	numLexico = tabDecla[numLexico].suivant;
-	
+
       tabDecla[numLexico].suivant = positionDebordement;
-      tabDecla[positionDebordement].nature = PROC;
+      tabDecla[positionDebordement].nature = TD_PROC;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
-      positionDebordement++;	
+      positionDebordement++;
     }
+    return 0;
 }
 
 
-void ajouterDeclaFonct(int numLexico)
+int ajouterDeclaFonct(int numLexico)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
       printf("Erreur, plus de mémoire disponible !\n");
-      exit(-1);
+      return (-1);
     }
 
   if(tabDecla[numLexico].nature == -1)
     {
-      tabDecla[numLexico].nature = FONCT;
+      tabDecla[numLexico].nature = TD_FONCT;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
       nbDecla++;
@@ -178,13 +173,14 @@ void ajouterDeclaFonct(int numLexico)
     {
       while(tabDecla[numLexico].suivant != -1)
 	numLexico = tabDecla[numLexico].suivant;
-	
+
       tabDecla[numLexico].suivant = positionDebordement;
-      tabDecla[positionDebordement].nature = FONCT;
+      tabDecla[positionDebordement].nature = TD_FONCT;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
-      positionDebordement++;	
+      positionDebordement++;
     }
+    return 0;
 }
 
 
@@ -194,7 +190,7 @@ void afficheTabDecla(TabDecla tab[])
 
   printf("\n-----Table des déclarations-----\n");
   printf(" Numlex\t|Nature\t|Suivant|Région\t| Description\t| Exécution\n");
-  for (i=0 ; i<nbDecla ; i++)
+  for (i=0 ; i<nbDecla+1 ; i++)
     printf(" %d\t| %d\t| %d\t| %d\t| %d\t\t| -1\n",i, tab[i].nature, tab[i].suivant, tab[i].region, tab[i].description);
 
   if(positionDebordement > DEBUT_DEBORDEMENT)
@@ -205,15 +201,15 @@ void afficheTabDecla(TabDecla tab[])
     }
 }
 
-
+/*
 int main(int argc, char **argv)
 {
-  initTab();  
+  initTab();
   ajouterDeclaFonct(4);
   ajouterDeclaVar(4);
   ajouterDeclaStruct(4);
   afficheTabDecla(tabDecla);
-  
+
   return EXIT_SUCCESS;
 }
-
+*/

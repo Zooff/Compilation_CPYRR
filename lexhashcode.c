@@ -13,7 +13,7 @@ int lexhc(char* lexeme) // fonction qui calcule le hashcode de la chaine
 return compteur%32;
 }
 
-structlexhc tablelexico[1000]; // Tableau qui contient tout les IDF possible
+structlexhc tablelexico[MAX]; // Tableau qui contient tout les IDF possible
 int lexhashtab[31]; // tableau qui contient le premier element des 32 cas possible pour le hashcode
 int numlex=4;  // numero lexicographique comence a 4
 
@@ -100,7 +100,7 @@ void affiche_lextab (structlexhc tab[])
 	int i;
 	printf("\n/* --------------tablelexico---------- */\n");
 	printf("numlex : longueur : suivant :  chaine     |\n");
-	for (i=0;i<20;i++)
+	for (i=0;i<numlex;i++)
 	printf(" %d    :      %d  :   %d    :   %s  \n",tab[i].numerolex, tab[i].longueur, tab[i].suivant, tab[i].chaine);
 	printf("/* -------------------------------- */ \n\n");
 }

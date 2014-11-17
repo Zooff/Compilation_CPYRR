@@ -9,6 +9,9 @@
 /*fichier hashcode*/
 #include "lexhashcode.h"
 
+/*fichier decla*/
+#include "decla.h"
+
 /*fichier arbre*/
 #include "xmalloc.h"
 #include "arbre_abstrait.h"

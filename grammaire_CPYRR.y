@@ -9,13 +9,13 @@
 
 /* Variable table lexicographique */
 
-/*structlexhc tablelexico[MAX];
+structlexhc tablelexico[MAX];
 int lexhashtab[31];
-int numlex=4;*/
+//int numlex=4;
 
 /* ------- ------ */
 
-
+TabDecla tabDecla[DECLARATION_MAX];
 
 int nb_region = 1;
 
@@ -98,18 +98,18 @@ int nb_region = 1;
 programme : PROG corps
           ;
 
-corps : liste_declarations liste_instructions
-      | liste_instructions
+corps : liste_declarations liste_instructions {$$ = $2;}
+      | liste_instructions {$$ = $1;}
       ;
 
 liste_declarations : declaration PV
                    | liste_declarations declaration PV
                    ;
 
-liste_instructions : DEBUT suite_liste_inst FIN
+liste_instructions : DEBUT suite_liste_inst FIN {$$ = $2;}
                    ;
 
-suite_liste_inst : instruction PV
+suite_liste_inst : instruction PV {$$ = $1;}
                  | suite_liste_inst instruction PV
                  ;
 
@@ -122,8 +122,16 @@ declaration : declaration_type
             ;
 
 declaration_type : TYPE IDF DP STRUCT liste_champs FSTRUCT
-                          | TYPE IDF DP TABLEAU dimension DE nom_type
-                 ;
+  {
+     if (ajouterDeclaStruct(4) == -1)
+       yyerror("Table Decla pleine");
+  }
+                           | TYPE IDF DP TABLEAU dimension DE nom_type
+  {
+     if (ajouterDeclaTab(4) == -1)
+       yyerror("Table Decla pleine");
+  }
+                           ;
 
 
 /* TABLEAU */
@@ -153,8 +161,8 @@ un_champ : IDF DP nom_type
 
 /* TYPE */
 
-nom_type : type_simple
-         | IDF
+nom_type : type_simple {$$ = $1;}
+         | IDF {$$  = $1;}
          ;
 
 type_simple : ENTIER
@@ -166,19 +174,29 @@ type_simple : ENTIER
 
 /* ----------- */
 
-declaration_variable : VARIABLE liste_IDF DP nom_type
+declaration_variable : VARIABLE decla_suite_var
                      ;
 
-liste_IDF : IDF
-          | liste_IDF VIRG IDF
+decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar(4) == -1)
+                                                           yyerror("Table Decla pleine");}
+                        | IDF VIRG decla_suite_var {if (ajouterDeclaVar(4) == -1)
+                                                                     yyerror("Table Decla pleine");}
           ;
 
 /* FONCTION/PROCEDURE */
 
 declaration_procedure : PROCEDURE IDF liste_parametres corps
+  {
+    if(ajouterDeclaProc(4) == -1)
+      yyerror("Table Decla pleine");
+  }
                       ;
 
 declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps
+  {
+    if (ajouterDeclaFonct(4) == -1)
+      yyerror("Table Decla pleine");
+  }
                      ;
 
 liste_parametres : PO PF
@@ -195,9 +213,9 @@ un_param : IDF DP type_simple
 /* -------------- */
 
 instruction : affectation
-            | condition
-            | tant_que
-            | declaration_procedure
+            | condition {$$ = $1;}
+            | tant_que {$$ = $1;}
+            | declaration_procedure {$$ = $1;}
             | appel
             | VIDE
             | RETOURNE resultat_retourne
@@ -214,15 +232,15 @@ resultat_retourne :
 appel : IDF liste_arguments
       ;
 
-liste_arguments : PO PF
-                | PO liste_args PF
+liste_arguments : PO PF {/*$$ = NULL;*/}
+                | PO liste_args PF {$$ = $2;}
 		;
 
-liste_args : un_arg
+liste_args : un_arg {$$ = $1;}
            | liste_args VIRG un_arg
            ;
 
-un_arg : expression
+un_arg : expression {$$ = $1;}
        ;
 
 
@@ -268,32 +286,32 @@ var : P variable
 
 expression : expression ET exp
            | expression OU exp
-           | exp
+           | exp {$$ = $1;}
            ;
 
 exp : exp opp_bool exp1
-    | exp1
+    | exp1 {$$ = $1;}
     ;
 
 exp1 : exp1 PLUS exp2
      | exp1 MOINS exp2
-     | exp2
+     | exp2 {$$ = $1;}
      ;
 
 exp2 : exp2 MULT exp3
      | exp2 DIV exp3
      | exp2 MOD exp3
-     | exp3
+     | exp3 {$$ = $1;}
      ;
 
-exp3 : PO expression PF
+exp3 : PO expression PF {$$ = $2;}
      | CSTE_ENTIERE
      | CSTE_REEL
      | CSTE_CARACTERE
      | CSTE_CHAINE
      | CSTE_BOOLEEN
-     | appel
-     | variable
+     | appel {$$ = $1;}
+     | variable {$$ = $1;}
      ;
 
 opp_bool : EGAL
@@ -328,14 +346,15 @@ liste_variables: liste_variables VIRG variable
 int main(){
 
  inittab(lexhashtab, 32);
+ initTabDecla();
+
+
+ printf( "-------- Début Compil --------");
 
  if ( yyparse() != 0 ) {
    fprintf(stderr,"Syntaxe incorrecte\n");
    return 1;
  }
-
- affiche_lexhashtab(lexhashtab);
  affiche_lextab(tablelexico);
-
-
+ afficheTabDecla(tabDecla);
 }
