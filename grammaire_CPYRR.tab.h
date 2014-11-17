@@ -96,7 +96,9 @@ extern int yydebug;
     CSTE_BOOLEEN = 306,
     CSTE_CARACTERE = 307,
     CSTE_CHAINE = 308,
-    IDF = 309
+    IDF = 309,
+    LIRE = 310,
+    ECRIRE = 311
   };
 #endif
 

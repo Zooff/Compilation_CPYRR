@@ -9,9 +9,9 @@
 
 /* Variable table lexicographique */
 
-structlexhc tablelexico[MAX];
+/*structlexhc tablelexico[MAX];
 int lexhashtab[31];
-int numlex=4;
+int numlex=4;*/
 
 /* ------- ------ */
 
@@ -121,12 +121,10 @@ declaration : declaration_type
             | declaration_fonction
             ;
 
-declaration_type : TYPE IDF DP suite_declaration_type
+declaration_type : TYPE IDF DP STRUCT liste_champs FSTRUCT
+                          | TYPE IDF DP TABLEAU dimension DE nom_type
                  ;
 
-suite_declaration_type : STRUCT liste_champs FSTRUCT
-                       | TABLEAU dimension DE nom_type
-                       ;
 
 /* TABLEAU */
 
@@ -326,3 +324,18 @@ liste_variables: liste_variables VIRG variable
                ;
 
 %%
+
+int main(){
+
+ inittab(lexhashtab, 32);
+
+ if ( yyparse() != 0 ) {
+   fprintf(stderr,"Syntaxe incorrecte\n");
+   return 1;
+ }
+
+ affiche_lexhashtab(lexhashtab);
+ affiche_lextab(tablelexico);
+
+
+}

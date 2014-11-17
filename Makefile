@@ -10,7 +10,7 @@ LDFLAGS = -ly -lfl
 
 
 compilateur: $(FIC_BISON).tab.c lex.yy.c
-	$(CC) -o compilateur $(FIC_BISON).tab.c lex.yy.c $(LDFLAGS)
+	$(CC) -o compilateur $(FIC_BISON).tab.c lex.yy.c lexhashcode.c $(LDFLAGS)
 
 
 grammaire_CPYRR.tab.c : $(FIC_BISON).y

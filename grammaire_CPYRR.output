@@ -20,56 +20,55 @@ Grammaire
    11            | declaration_procedure
    12            | declaration_fonction
 
-   13 declaration_type: TYPE IDF DP suite_declaration_type
+   13 declaration_type: TYPE IDF DP STRUCT liste_champs FSTRUCT
+   14                 | TYPE IDF DP TABLEAU dimension DE nom_type
 
-   14 suite_declaration_type: STRUCT liste_champs FSTRUCT
-   15                       | TABLEAU dimension DE nom_type
+   15 dimension: CO liste_dimensions CF
 
-   16 dimension: CO liste_dimensions CF
+   16 liste_dimensions: une_dimension
+   17                 | liste_dimensions VIRG une_dimension
 
-   17 liste_dimensions: une_dimension
-   18                 | liste_dimensions VIRG une_dimension
+   18 une_dimension: expression PP expression
 
-   19 une_dimension: expression PP expression
+   19 liste_champs: un_champ PV
+   20             | liste_champs un_champ PV
 
-   20 liste_champs: un_champ PV
-   21             | liste_champs un_champ PV
+   21 un_champ: IDF DP nom_type
 
-   22 un_champ: IDF DP nom_type
+   22 nom_type: type_simple
+   23         | IDF
 
-   23 nom_type: type_simple
-   24         | IDF
+   24 type_simple: ENTIER
+   25            | REEL
+   26            | BOOLEEN
+   27            | CARACTERE
+   28            | CHAINE CO CSTE_ENTIERE CF
 
-   25 type_simple: ENTIER
-   26            | REEL
-   27            | BOOLEEN
-   28            | CARACTERE
-   29            | CHAINE CO CSTE_ENTIERE CF
+   29 declaration_variable: VARIABLE liste_IDF DP nom_type
 
-   30 declaration_variable: VARIABLE liste_IDF DP nom_type
+   30 liste_IDF: IDF
+   31          | liste_IDF VIRG IDF
 
-   31 liste_IDF: IDF
-   32          | liste_IDF VIRG IDF
+   32 declaration_procedure: PROCEDURE IDF liste_parametres corps
 
-   33 declaration_procedure: PROCEDURE IDF liste_parametres corps
+   33 declaration_fonction: FONCTION IDF liste_parametres RETOURNE type_simple corps
 
-   34 declaration_fonction: FONCTION IDF liste_parametres RETOURNE type_simple corps
+   34 liste_parametres: PO PF
+   35                 | PO liste_param PF
 
-   35 liste_parametres: PO PF
-   36                 | PO liste_param PF
+   36 liste_param: un_param
+   37            | liste_param PV un_param
 
-   37 liste_param: un_param
-   38            | liste_param PV un_param
+   38 un_param: IDF DP type_simple
 
-   39 un_param: IDF DP type_simple
-
-   40 instruction: affectation
-   41            | condition
-   42            | tant_que
-   43            | declaration_procedure
-   44            | appel
-   45            | VIDE
-   46            | RETOURNE resultat_retourne
+   39 instruction: affectation
+   40            | condition
+   41            | tant_que
+   42            | declaration_procedure
+   43            | appel
+   44            | VIDE
+   45            | RETOURNE resultat_retourne
+   46            | fonc_pre
 
    47 resultat_retourne: %empty
    48                  | expression
@@ -131,44 +130,55 @@ Grammaire
    88         | SUP_EGAL
    89         | INF_EGAL
 
+   90 fonc_pre: LIRE PO liste_variables PF
+   91         | ECRIRE PO format suite_ecriture PF
+
+   92 suite_ecriture: VIRG variable suite_ecriture
+   93               | %empty
+
+   94 format: CSTE_CHAINE
+
+   95 liste_variables: liste_variables VIRG variable
+   96                | variable
+
 
 Terminaux, suivis des règles où ils apparaissent
 
 $end (0) 0
 error (256)
-PV (258) 4 5 7 8 20 21 38
-PP (259) 19
-DP (260) 13 22 30 39
-VIRG (261) 18 32 53 61
-PO (262) 35 36 50 51 56 76
-PF (263) 35 36 50 51 56 76
-CO (264) 16 29 58
-CF (265) 16 29 58
+PV (258) 4 5 7 8 19 20 37
+PP (259) 18
+DP (260) 13 14 21 29 38
+VIRG (261) 17 31 53 61 92 95
+PO (262) 34 35 50 51 56 76 90 91
+PF (263) 34 35 50 51 56 76 90 91
+CO (264) 15 28 58
+CF (265) 15 28 58
 P (266) 62
 OPAFF (267) 57
-ENTIER (268) 25
-REEL (269) 26
-BOOLEEN (270) 27
-CARACTERE (271) 28
-CHAINE (272) 29
+ENTIER (268) 24
+REEL (269) 25
+BOOLEEN (270) 26
+CARACTERE (271) 27
+CHAINE (272) 28
 TANT_QUE (273) 56
 FAIRE (274) 56
 SI (275) 55
 ALORS (276) 55
 SINON (277) 55
-TABLEAU (278) 15
-DE (279) 15
-STRUCT (280) 14
-FSTRUCT (281) 14
+TABLEAU (278) 14
+DE (279) 14
+STRUCT (280) 13
+FSTRUCT (281) 13
 PROG (282) 1
 DEBUT (283) 6
 FIN (284) 6
-TYPE (285) 13
-VARIABLE (286) 30
-PROCEDURE (287) 33
-FONCTION (288) 34
-RETOURNE (289) 34 46
-VIDE (290) 45
+TYPE (285) 13 14
+VARIABLE (286) 29
+PROCEDURE (287) 32
+FONCTION (288) 33
+RETOURNE (289) 33 45
+VIDE (290) 44
 PLUS (291) 69
 MOINS (292) 70
 MULT (293) 72
@@ -182,98 +192,106 @@ SUP_EGAL (300) 88
 INF_EGAL (301) 89
 OU (302) 65
 ET (303) 64
-CSTE_ENTIERE (304) 29 77
+CSTE_ENTIERE (304) 28 77
 CSTE_REEL (305) 78
 CSTE_BOOLEEN (306) 81
 CSTE_CARACTERE (307) 79
-CSTE_CHAINE (308) 80
-IDF (309) 13 22 24 31 32 33 34 39 49 58 59
+CSTE_CHAINE (308) 80 94
+IDF (309) 13 14 21 23 30 31 32 33 38 49 58 59
+LIRE (310) 90
+ECRIRE (311) 91
 
 
 Non-terminaux, suivis des règles où ils apparaissent
 
-$accept (55)
+$accept (57)
     à gauche: 0
-programme (56)
+programme (58)
     à gauche: 1, à droite: 0
-corps (57)
-    à gauche: 2 3, à droite: 1 33 34
-liste_declarations (58)
+corps (59)
+    à gauche: 2 3, à droite: 1 32 33
+liste_declarations (60)
     à gauche: 4 5, à droite: 2 5
-liste_instructions (59)
+liste_instructions (61)
     à gauche: 6, à droite: 2 3 55 56
-suite_liste_inst (60)
+suite_liste_inst (62)
     à gauche: 7 8, à droite: 6 8
-declaration (61)
+declaration (63)
     à gauche: 9 10 11 12, à droite: 4 5
-declaration_type (62)
-    à gauche: 13, à droite: 9
-suite_declaration_type (63)
-    à gauche: 14 15, à droite: 13
-dimension (64)
-    à gauche: 16, à droite: 15
-liste_dimensions (65)
-    à gauche: 17 18, à droite: 16 18
-une_dimension (66)
-    à gauche: 19, à droite: 17 18
-liste_champs (67)
-    à gauche: 20 21, à droite: 14 21
-un_champ (68)
-    à gauche: 22, à droite: 20 21
-nom_type (69)
-    à gauche: 23 24, à droite: 15 22 30
-type_simple (70)
-    à gauche: 25 26 27 28 29, à droite: 23 34 39
-declaration_variable (71)
-    à gauche: 30, à droite: 10
-liste_IDF (72)
-    à gauche: 31 32, à droite: 30 32
-declaration_procedure (73)
-    à gauche: 33, à droite: 11 43
-declaration_fonction (74)
-    à gauche: 34, à droite: 12
-liste_parametres (75)
-    à gauche: 35 36, à droite: 33 34
-liste_param (76)
-    à gauche: 37 38, à droite: 36 38
-un_param (77)
-    à gauche: 39, à droite: 37 38
-instruction (78)
-    à gauche: 40 41 42 43 44 45 46, à droite: 7 8
-resultat_retourne (79)
-    à gauche: 47 48, à droite: 46
-appel (80)
-    à gauche: 49, à droite: 44 82
-liste_arguments (81)
+declaration_type (64)
+    à gauche: 13 14, à droite: 9
+dimension (65)
+    à gauche: 15, à droite: 14
+liste_dimensions (66)
+    à gauche: 16 17, à droite: 15 17
+une_dimension (67)
+    à gauche: 18, à droite: 16 17
+liste_champs (68)
+    à gauche: 19 20, à droite: 13 20
+un_champ (69)
+    à gauche: 21, à droite: 19 20
+nom_type (70)
+    à gauche: 22 23, à droite: 14 21 29
+type_simple (71)
+    à gauche: 24 25 26 27 28, à droite: 22 33 38
+declaration_variable (72)
+    à gauche: 29, à droite: 10
+liste_IDF (73)
+    à gauche: 30 31, à droite: 29 31
+declaration_procedure (74)
+    à gauche: 32, à droite: 11 42
+declaration_fonction (75)
+    à gauche: 33, à droite: 12
+liste_parametres (76)
+    à gauche: 34 35, à droite: 32 33
+liste_param (77)
+    à gauche: 36 37, à droite: 35 37
+un_param (78)
+    à gauche: 38, à droite: 36 37
+instruction (79)
+    à gauche: 39 40 41 42 43 44 45 46, à droite: 7 8
+resultat_retourne (80)
+    à gauche: 47 48, à droite: 45
+appel (81)
+    à gauche: 49, à droite: 43 82
+liste_arguments (82)
     à gauche: 50 51, à droite: 49
-liste_args (82)
+liste_args (83)
     à gauche: 52 53, à droite: 51 53
-un_arg (83)
+un_arg (84)
     à gauche: 54, à droite: 52 53
-condition (84)
-    à gauche: 55, à droite: 41
-tant_que (85)
-    à gauche: 56, à droite: 42
-affectation (86)
-    à gauche: 57, à droite: 40
-variable (87)
-    à gauche: 58 59, à droite: 57 62 83
-liste_var (88)
+condition (85)
+    à gauche: 55, à droite: 40
+tant_que (86)
+    à gauche: 56, à droite: 41
+affectation (87)
+    à gauche: 57, à droite: 39
+variable (88)
+    à gauche: 58 59, à droite: 57 62 83 92 95 96
+liste_var (89)
     à gauche: 60 61, à droite: 58 61
-var (89)
+var (90)
     à gauche: 62 63, à droite: 58 59
-expression (90)
-    à gauche: 64 65 66, à droite: 19 48 54 55 56 57 60 61 64 65 76
-exp (91)
+expression (91)
+    à gauche: 64 65 66, à droite: 18 48 54 55 56 57 60 61 64 65 76
+exp (92)
     à gauche: 67 68, à droite: 64 65 66 67
-exp1 (92)
+exp1 (93)
     à gauche: 69 70 71, à droite: 67 68 69 70
-exp2 (93)
+exp2 (94)
     à gauche: 72 73 74 75, à droite: 69 70 71 72 73 74
-exp3 (94)
+exp3 (95)
     à gauche: 76 77 78 79 80 81 82 83, à droite: 72 73 74 75
-opp_bool (95)
+opp_bool (96)
     à gauche: 84 85 86 87 88 89, à droite: 67
+fonc_pre (97)
+    à gauche: 90 91, à droite: 46
+suite_ecriture (98)
+    à gauche: 92 93, à droite: 91 92
+format (99)
+    à gauche: 94, à droite: 91
+liste_variables (100)
+    à gauche: 95 96, à droite: 90 95
 
 
 État 0
@@ -322,45 +340,49 @@ opp_bool (95)
     RETOURNE   décalage et aller à l'état 19
     VIDE       décalage et aller à l'état 20
     IDF        décalage et aller à l'état 21
+    LIRE       décalage et aller à l'état 22
+    ECRIRE     décalage et aller à l'état 23
 
-    suite_liste_inst       aller à l'état 22
-    declaration_procedure  aller à l'état 23
-    instruction            aller à l'état 24
-    appel                  aller à l'état 25
-    condition              aller à l'état 26
-    tant_que               aller à l'état 27
-    affectation            aller à l'état 28
-    variable               aller à l'état 29
+    suite_liste_inst       aller à l'état 24
+    declaration_procedure  aller à l'état 25
+    instruction            aller à l'état 26
+    appel                  aller à l'état 27
+    condition              aller à l'état 28
+    tant_que               aller à l'état 29
+    affectation            aller à l'état 30
+    variable               aller à l'état 31
+    fonc_pre               aller à l'état 32
 
 
 État 4
 
-   13 declaration_type: TYPE . IDF DP suite_declaration_type
-
-    IDF  décalage et aller à l'état 30
-
-
-État 5
-
-   30 declaration_variable: VARIABLE . liste_IDF DP nom_type
-
-    IDF  décalage et aller à l'état 31
-
-    liste_IDF  aller à l'état 32
-
-
-État 6
-
-   33 declaration_procedure: PROCEDURE . IDF liste_parametres corps
+   13 declaration_type: TYPE . IDF DP STRUCT liste_champs FSTRUCT
+   14                 | TYPE . IDF DP TABLEAU dimension DE nom_type
 
     IDF  décalage et aller à l'état 33
 
 
-État 7
+État 5
 
-   34 declaration_fonction: FONCTION . IDF liste_parametres RETOURNE type_simple corps
+   29 declaration_variable: VARIABLE . liste_IDF DP nom_type
 
     IDF  décalage et aller à l'état 34
+
+    liste_IDF  aller à l'état 35
+
+
+État 6
+
+   32 declaration_procedure: PROCEDURE . IDF liste_parametres corps
+
+    IDF  décalage et aller à l'état 36
+
+
+État 7
+
+   33 declaration_fonction: FONCTION . IDF liste_parametres RETOURNE type_simple corps
+
+    IDF  décalage et aller à l'état 37
 
 
 État 8
@@ -381,8 +403,8 @@ opp_bool (95)
     PROCEDURE  décalage et aller à l'état 6
     FONCTION   décalage et aller à l'état 7
 
-    liste_instructions     aller à l'état 35
-    declaration            aller à l'état 36
+    liste_instructions     aller à l'état 38
+    declaration            aller à l'état 39
     declaration_type       aller à l'état 12
     declaration_variable   aller à l'état 13
     declaration_procedure  aller à l'état 14
@@ -400,7 +422,7 @@ opp_bool (95)
 
     4 liste_declarations: declaration . PV
 
-    PV  décalage et aller à l'état 37
+    PV  décalage et aller à l'état 40
 
 
 État 12
@@ -442,59 +464,59 @@ opp_bool (95)
 
    56 tant_que: TANT_QUE . PO expression PF FAIRE liste_instructions
 
-    PO  décalage et aller à l'état 38
+    PO  décalage et aller à l'état 41
 
 
 État 18
 
    55 condition: SI . expression ALORS liste_instructions SINON liste_instructions
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    variable    aller à l'état 46
-    expression  aller à l'état 47
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    variable    aller à l'état 49
+    expression  aller à l'état 50
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
 État 19
 
-   46 instruction: RETOURNE . resultat_retourne
+   45 instruction: RETOURNE . resultat_retourne
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
     $défaut  réduction par utilisation de la règle 47 (resultat_retourne)
 
-    resultat_retourne  aller à l'état 52
-    appel              aller à l'état 45
-    variable           aller à l'état 46
-    expression         aller à l'état 53
-    exp                aller à l'état 48
-    exp1               aller à l'état 49
-    exp2               aller à l'état 50
-    exp3               aller à l'état 51
+    resultat_retourne  aller à l'état 55
+    appel              aller à l'état 48
+    variable           aller à l'état 49
+    expression         aller à l'état 56
+    exp                aller à l'état 51
+    exp1               aller à l'état 52
+    exp2               aller à l'état 53
+    exp3               aller à l'état 54
 
 
 État 20
 
-   45 instruction: VIDE .
+   44 instruction: VIDE .
 
-    $défaut  réduction par utilisation de la règle 45 (instruction)
+    $défaut  réduction par utilisation de la règle 44 (instruction)
 
 
 État 21
@@ -503,479 +525,522 @@ opp_bool (95)
    58 variable: IDF . CO liste_var CF var
    59         | IDF . var
 
-    PO  décalage et aller à l'état 54
-    CO  décalage et aller à l'état 55
-    P   décalage et aller à l'état 56
+    PO  décalage et aller à l'état 57
+    CO  décalage et aller à l'état 58
+    P   décalage et aller à l'état 59
 
     $défaut  réduction par utilisation de la règle 63 (var)
 
-    liste_arguments  aller à l'état 57
-    var              aller à l'état 58
+    liste_arguments  aller à l'état 60
+    var              aller à l'état 61
 
 
 État 22
+
+   90 fonc_pre: LIRE . PO liste_variables PF
+
+    PO  décalage et aller à l'état 62
+
+
+État 23
+
+   91 fonc_pre: ECRIRE . PO format suite_ecriture PF
+
+    PO  décalage et aller à l'état 63
+
+
+État 24
 
     6 liste_instructions: DEBUT suite_liste_inst . FIN
     8 suite_liste_inst: suite_liste_inst . instruction PV
 
     TANT_QUE   décalage et aller à l'état 17
     SI         décalage et aller à l'état 18
-    FIN        décalage et aller à l'état 59
+    FIN        décalage et aller à l'état 64
     PROCEDURE  décalage et aller à l'état 6
     RETOURNE   décalage et aller à l'état 19
     VIDE       décalage et aller à l'état 20
     IDF        décalage et aller à l'état 21
+    LIRE       décalage et aller à l'état 22
+    ECRIRE     décalage et aller à l'état 23
 
-    declaration_procedure  aller à l'état 23
-    instruction            aller à l'état 60
-    appel                  aller à l'état 25
-    condition              aller à l'état 26
-    tant_que               aller à l'état 27
-    affectation            aller à l'état 28
-    variable               aller à l'état 29
-
-
-État 23
-
-   43 instruction: declaration_procedure .
-
-    $défaut  réduction par utilisation de la règle 43 (instruction)
-
-
-État 24
-
-    7 suite_liste_inst: instruction . PV
-
-    PV  décalage et aller à l'état 61
+    declaration_procedure  aller à l'état 25
+    instruction            aller à l'état 65
+    appel                  aller à l'état 27
+    condition              aller à l'état 28
+    tant_que               aller à l'état 29
+    affectation            aller à l'état 30
+    variable               aller à l'état 31
+    fonc_pre               aller à l'état 32
 
 
 État 25
 
-   44 instruction: appel .
-
-    $défaut  réduction par utilisation de la règle 44 (instruction)
-
-
-État 26
-
-   41 instruction: condition .
-
-    $défaut  réduction par utilisation de la règle 41 (instruction)
-
-
-État 27
-
-   42 instruction: tant_que .
+   42 instruction: declaration_procedure .
 
     $défaut  réduction par utilisation de la règle 42 (instruction)
 
 
+État 26
+
+    7 suite_liste_inst: instruction . PV
+
+    PV  décalage et aller à l'état 66
+
+
+État 27
+
+   43 instruction: appel .
+
+    $défaut  réduction par utilisation de la règle 43 (instruction)
+
+
 État 28
 
-   40 instruction: affectation .
+   40 instruction: condition .
 
     $défaut  réduction par utilisation de la règle 40 (instruction)
 
 
 État 29
 
-   57 affectation: variable . OPAFF expression
+   41 instruction: tant_que .
 
-    OPAFF  décalage et aller à l'état 62
+    $défaut  réduction par utilisation de la règle 41 (instruction)
 
 
 État 30
 
-   13 declaration_type: TYPE IDF . DP suite_declaration_type
+   39 instruction: affectation .
 
-    DP  décalage et aller à l'état 63
+    $défaut  réduction par utilisation de la règle 39 (instruction)
 
 
 État 31
 
-   31 liste_IDF: IDF .
+   57 affectation: variable . OPAFF expression
 
-    $défaut  réduction par utilisation de la règle 31 (liste_IDF)
+    OPAFF  décalage et aller à l'état 67
 
 
 État 32
 
-   30 declaration_variable: VARIABLE liste_IDF . DP nom_type
-   32 liste_IDF: liste_IDF . VIRG IDF
+   46 instruction: fonc_pre .
 
-    DP    décalage et aller à l'état 64
-    VIRG  décalage et aller à l'état 65
+    $défaut  réduction par utilisation de la règle 46 (instruction)
 
 
 État 33
 
-   33 declaration_procedure: PROCEDURE IDF . liste_parametres corps
+   13 declaration_type: TYPE IDF . DP STRUCT liste_champs FSTRUCT
+   14                 | TYPE IDF . DP TABLEAU dimension DE nom_type
 
-    PO  décalage et aller à l'état 66
-
-    liste_parametres  aller à l'état 67
+    DP  décalage et aller à l'état 68
 
 
 État 34
 
-   34 declaration_fonction: FONCTION IDF . liste_parametres RETOURNE type_simple corps
+   30 liste_IDF: IDF .
 
-    PO  décalage et aller à l'état 66
-
-    liste_parametres  aller à l'état 68
+    $défaut  réduction par utilisation de la règle 30 (liste_IDF)
 
 
 État 35
+
+   29 declaration_variable: VARIABLE liste_IDF . DP nom_type
+   31 liste_IDF: liste_IDF . VIRG IDF
+
+    DP    décalage et aller à l'état 69
+    VIRG  décalage et aller à l'état 70
+
+
+État 36
+
+   32 declaration_procedure: PROCEDURE IDF . liste_parametres corps
+
+    PO  décalage et aller à l'état 71
+
+    liste_parametres  aller à l'état 72
+
+
+État 37
+
+   33 declaration_fonction: FONCTION IDF . liste_parametres RETOURNE type_simple corps
+
+    PO  décalage et aller à l'état 71
+
+    liste_parametres  aller à l'état 73
+
+
+État 38
 
     2 corps: liste_declarations liste_instructions .
 
     $défaut  réduction par utilisation de la règle 2 (corps)
 
 
-État 36
+État 39
 
     5 liste_declarations: liste_declarations declaration . PV
 
-    PV  décalage et aller à l'état 69
+    PV  décalage et aller à l'état 74
 
 
-État 37
+État 40
 
     4 liste_declarations: declaration PV .
 
     $défaut  réduction par utilisation de la règle 4 (liste_declarations)
 
 
-État 38
+État 41
 
    56 tant_que: TANT_QUE PO . expression PF FAIRE liste_instructions
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    variable    aller à l'état 46
-    expression  aller à l'état 70
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    variable    aller à l'état 49
+    expression  aller à l'état 75
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
-État 39
+État 42
 
    76 exp3: PO . expression PF
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    variable    aller à l'état 46
-    expression  aller à l'état 71
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    variable    aller à l'état 49
+    expression  aller à l'état 76
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
-État 40
+État 43
 
    77 exp3: CSTE_ENTIERE .
 
     $défaut  réduction par utilisation de la règle 77 (exp3)
 
 
-État 41
+État 44
 
    78 exp3: CSTE_REEL .
 
     $défaut  réduction par utilisation de la règle 78 (exp3)
 
 
-État 42
+État 45
 
    81 exp3: CSTE_BOOLEEN .
 
     $défaut  réduction par utilisation de la règle 81 (exp3)
 
 
-État 43
+État 46
 
    79 exp3: CSTE_CARACTERE .
 
     $défaut  réduction par utilisation de la règle 79 (exp3)
 
 
-État 44
+État 47
 
    80 exp3: CSTE_CHAINE .
 
     $défaut  réduction par utilisation de la règle 80 (exp3)
 
 
-État 45
+État 48
 
    82 exp3: appel .
 
     $défaut  réduction par utilisation de la règle 82 (exp3)
 
 
-État 46
+État 49
 
    83 exp3: variable .
 
     $défaut  réduction par utilisation de la règle 83 (exp3)
 
 
-État 47
+État 50
 
    55 condition: SI expression . ALORS liste_instructions SINON liste_instructions
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    ALORS  décalage et aller à l'état 72
-    OU     décalage et aller à l'état 73
-    ET     décalage et aller à l'état 74
+    ALORS  décalage et aller à l'état 77
+    OU     décalage et aller à l'état 78
+    ET     décalage et aller à l'état 79
 
 
-État 48
+État 51
 
    66 expression: exp .
    67 exp: exp . opp_bool exp1
 
-    EGAL       décalage et aller à l'état 75
-    DIFFERENT  décalage et aller à l'état 76
-    SUPERIEUR  décalage et aller à l'état 77
-    INFERIEUR  décalage et aller à l'état 78
-    SUP_EGAL   décalage et aller à l'état 79
-    INF_EGAL   décalage et aller à l'état 80
+    EGAL       décalage et aller à l'état 80
+    DIFFERENT  décalage et aller à l'état 81
+    SUPERIEUR  décalage et aller à l'état 82
+    INFERIEUR  décalage et aller à l'état 83
+    SUP_EGAL   décalage et aller à l'état 84
+    INF_EGAL   décalage et aller à l'état 85
 
     $défaut  réduction par utilisation de la règle 66 (expression)
 
-    opp_bool  aller à l'état 81
+    opp_bool  aller à l'état 86
 
 
-État 49
+État 52
 
    68 exp: exp1 .
    69 exp1: exp1 . PLUS exp2
    70     | exp1 . MOINS exp2
 
-    PLUS   décalage et aller à l'état 82
-    MOINS  décalage et aller à l'état 83
+    PLUS   décalage et aller à l'état 87
+    MOINS  décalage et aller à l'état 88
 
     $défaut  réduction par utilisation de la règle 68 (exp)
 
 
-État 50
+État 53
 
    71 exp1: exp2 .
    72 exp2: exp2 . MULT exp3
    73     | exp2 . DIV exp3
    74     | exp2 . MOD exp3
 
-    MULT  décalage et aller à l'état 84
-    DIV   décalage et aller à l'état 85
-    MOD   décalage et aller à l'état 86
+    MULT  décalage et aller à l'état 89
+    DIV   décalage et aller à l'état 90
+    MOD   décalage et aller à l'état 91
 
     $défaut  réduction par utilisation de la règle 71 (exp1)
 
 
-État 51
+État 54
 
    75 exp2: exp3 .
 
     $défaut  réduction par utilisation de la règle 75 (exp2)
 
 
-État 52
+État 55
 
-   46 instruction: RETOURNE resultat_retourne .
+   45 instruction: RETOURNE resultat_retourne .
 
-    $défaut  réduction par utilisation de la règle 46 (instruction)
+    $défaut  réduction par utilisation de la règle 45 (instruction)
 
 
-État 53
+État 56
 
    48 resultat_retourne: expression .
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
     $défaut  réduction par utilisation de la règle 48 (resultat_retourne)
 
 
-État 54
+État 57
 
    50 liste_arguments: PO . PF
    51                | PO . liste_args PF
 
-    PO              décalage et aller à l'état 39
-    PF              décalage et aller à l'état 87
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    PF              décalage et aller à l'état 92
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    liste_args  aller à l'état 88
-    un_arg      aller à l'état 89
-    variable    aller à l'état 46
-    expression  aller à l'état 90
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    liste_args  aller à l'état 93
+    un_arg      aller à l'état 94
+    variable    aller à l'état 49
+    expression  aller à l'état 95
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
-État 55
+État 58
 
    58 variable: IDF CO . liste_var CF var
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    variable    aller à l'état 46
-    liste_var   aller à l'état 91
-    expression  aller à l'état 92
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    variable    aller à l'état 49
+    liste_var   aller à l'état 96
+    expression  aller à l'état 97
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
-État 56
+État 59
 
    62 var: P . variable
 
-    IDF  décalage et aller à l'état 93
+    IDF  décalage et aller à l'état 98
 
-    variable  aller à l'état 94
+    variable  aller à l'état 99
 
 
-État 57
+État 60
 
    49 appel: IDF liste_arguments .
 
     $défaut  réduction par utilisation de la règle 49 (appel)
 
 
-État 58
+État 61
 
    59 variable: IDF var .
 
     $défaut  réduction par utilisation de la règle 59 (variable)
 
 
-État 59
+État 62
+
+   90 fonc_pre: LIRE PO . liste_variables PF
+
+    IDF  décalage et aller à l'état 98
+
+    variable         aller à l'état 100
+    liste_variables  aller à l'état 101
+
+
+État 63
+
+   91 fonc_pre: ECRIRE PO . format suite_ecriture PF
+
+    CSTE_CHAINE  décalage et aller à l'état 102
+
+    format  aller à l'état 103
+
+
+État 64
 
     6 liste_instructions: DEBUT suite_liste_inst FIN .
 
     $défaut  réduction par utilisation de la règle 6 (liste_instructions)
 
 
-État 60
+État 65
 
     8 suite_liste_inst: suite_liste_inst instruction . PV
 
-    PV  décalage et aller à l'état 95
+    PV  décalage et aller à l'état 104
 
 
-État 61
+État 66
 
     7 suite_liste_inst: instruction PV .
 
     $défaut  réduction par utilisation de la règle 7 (suite_liste_inst)
 
 
-État 62
+État 67
 
    57 affectation: variable OPAFF . expression
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    variable    aller à l'état 46
-    expression  aller à l'état 96
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    variable    aller à l'état 49
+    expression  aller à l'état 105
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
-État 63
+État 68
 
-   13 declaration_type: TYPE IDF DP . suite_declaration_type
+   13 declaration_type: TYPE IDF DP . STRUCT liste_champs FSTRUCT
+   14                 | TYPE IDF DP . TABLEAU dimension DE nom_type
 
-    TABLEAU  décalage et aller à l'état 97
-    STRUCT   décalage et aller à l'état 98
-
-    suite_declaration_type  aller à l'état 99
-
-
-État 64
-
-   30 declaration_variable: VARIABLE liste_IDF DP . nom_type
-
-    ENTIER     décalage et aller à l'état 100
-    REEL       décalage et aller à l'état 101
-    BOOLEEN    décalage et aller à l'état 102
-    CARACTERE  décalage et aller à l'état 103
-    CHAINE     décalage et aller à l'état 104
-    IDF        décalage et aller à l'état 105
-
-    nom_type     aller à l'état 106
-    type_simple  aller à l'état 107
+    TABLEAU  décalage et aller à l'état 106
+    STRUCT   décalage et aller à l'état 107
 
 
-État 65
+État 69
 
-   32 liste_IDF: liste_IDF VIRG . IDF
+   29 declaration_variable: VARIABLE liste_IDF DP . nom_type
 
-    IDF  décalage et aller à l'état 108
+    ENTIER     décalage et aller à l'état 108
+    REEL       décalage et aller à l'état 109
+    BOOLEEN    décalage et aller à l'état 110
+    CARACTERE  décalage et aller à l'état 111
+    CHAINE     décalage et aller à l'état 112
+    IDF        décalage et aller à l'état 113
 
-
-État 66
-
-   35 liste_parametres: PO . PF
-   36                 | PO . liste_param PF
-
-    PF   décalage et aller à l'état 109
-    IDF  décalage et aller à l'état 110
-
-    liste_param  aller à l'état 111
-    un_param     aller à l'état 112
+    nom_type     aller à l'état 114
+    type_simple  aller à l'état 115
 
 
-État 67
+État 70
 
-   33 declaration_procedure: PROCEDURE IDF liste_parametres . corps
+   31 liste_IDF: liste_IDF VIRG . IDF
+
+    IDF  décalage et aller à l'état 116
+
+
+État 71
+
+   34 liste_parametres: PO . PF
+   35                 | PO . liste_param PF
+
+    PF   décalage et aller à l'état 117
+    IDF  décalage et aller à l'état 118
+
+    liste_param  aller à l'état 119
+    un_param     aller à l'état 120
+
+
+État 72
+
+   32 declaration_procedure: PROCEDURE IDF liste_parametres . corps
 
     DEBUT      décalage et aller à l'état 3
     TYPE       décalage et aller à l'état 4
@@ -983,7 +1048,7 @@ opp_bool (95)
     PROCEDURE  décalage et aller à l'état 6
     FONCTION   décalage et aller à l'état 7
 
-    corps                  aller à l'état 113
+    corps                  aller à l'état 121
     liste_declarations     aller à l'état 9
     liste_instructions     aller à l'état 10
     declaration            aller à l'état 11
@@ -993,744 +1058,803 @@ opp_bool (95)
     declaration_fonction   aller à l'état 15
 
 
-État 68
+État 73
 
-   34 declaration_fonction: FONCTION IDF liste_parametres . RETOURNE type_simple corps
+   33 declaration_fonction: FONCTION IDF liste_parametres . RETOURNE type_simple corps
 
-    RETOURNE  décalage et aller à l'état 114
+    RETOURNE  décalage et aller à l'état 122
 
 
-État 69
+État 74
 
     5 liste_declarations: liste_declarations declaration PV .
 
     $défaut  réduction par utilisation de la règle 5 (liste_declarations)
 
 
-État 70
+État 75
 
    56 tant_que: TANT_QUE PO expression . PF FAIRE liste_instructions
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    PF  décalage et aller à l'état 115
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    PF  décalage et aller à l'état 123
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
 
-État 71
+État 76
 
    64 expression: expression . ET exp
    65           | expression . OU exp
    76 exp3: PO expression . PF
 
-    PF  décalage et aller à l'état 116
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    PF  décalage et aller à l'état 124
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
 
-État 72
+État 77
 
    55 condition: SI expression ALORS . liste_instructions SINON liste_instructions
 
     DEBUT  décalage et aller à l'état 3
 
-    liste_instructions  aller à l'état 117
+    liste_instructions  aller à l'état 125
 
 
-État 73
+État 78
 
    65 expression: expression OU . exp
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp       aller à l'état 118
-    exp1      aller à l'état 49
-    exp2      aller à l'état 50
-    exp3      aller à l'état 51
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp       aller à l'état 126
+    exp1      aller à l'état 52
+    exp2      aller à l'état 53
+    exp3      aller à l'état 54
 
 
-État 74
+État 79
 
    64 expression: expression ET . exp
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp       aller à l'état 119
-    exp1      aller à l'état 49
-    exp2      aller à l'état 50
-    exp3      aller à l'état 51
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp       aller à l'état 127
+    exp1      aller à l'état 52
+    exp2      aller à l'état 53
+    exp3      aller à l'état 54
 
 
-État 75
+État 80
 
    84 opp_bool: EGAL .
 
     $défaut  réduction par utilisation de la règle 84 (opp_bool)
 
 
-État 76
+État 81
 
    85 opp_bool: DIFFERENT .
 
     $défaut  réduction par utilisation de la règle 85 (opp_bool)
 
 
-État 77
+État 82
 
    86 opp_bool: SUPERIEUR .
 
     $défaut  réduction par utilisation de la règle 86 (opp_bool)
 
 
-État 78
+État 83
 
    87 opp_bool: INFERIEUR .
 
     $défaut  réduction par utilisation de la règle 87 (opp_bool)
 
 
-État 79
+État 84
 
    88 opp_bool: SUP_EGAL .
 
     $défaut  réduction par utilisation de la règle 88 (opp_bool)
 
 
-État 80
+État 85
 
    89 opp_bool: INF_EGAL .
 
     $défaut  réduction par utilisation de la règle 89 (opp_bool)
 
 
-État 81
+État 86
 
    67 exp: exp opp_bool . exp1
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp1      aller à l'état 120
-    exp2      aller à l'état 50
-    exp3      aller à l'état 51
-
-
-État 82
-
-   69 exp1: exp1 PLUS . exp2
-
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
-    IDF             décalage et aller à l'état 21
-
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp2      aller à l'état 121
-    exp3      aller à l'état 51
-
-
-État 83
-
-   70 exp1: exp1 MOINS . exp2
-
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
-    IDF             décalage et aller à l'état 21
-
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp2      aller à l'état 122
-    exp3      aller à l'état 51
-
-
-État 84
-
-   72 exp2: exp2 MULT . exp3
-
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
-    IDF             décalage et aller à l'état 21
-
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp3      aller à l'état 123
-
-
-État 85
-
-   73 exp2: exp2 DIV . exp3
-
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
-    IDF             décalage et aller à l'état 21
-
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp3      aller à l'état 124
-
-
-État 86
-
-   74 exp2: exp2 MOD . exp3
-
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
-    IDF             décalage et aller à l'état 21
-
-    appel     aller à l'état 45
-    variable  aller à l'état 46
-    exp3      aller à l'état 125
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp1      aller à l'état 128
+    exp2      aller à l'état 53
+    exp3      aller à l'état 54
 
 
 État 87
+
+   69 exp1: exp1 PLUS . exp2
+
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
+    IDF             décalage et aller à l'état 21
+
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp2      aller à l'état 129
+    exp3      aller à l'état 54
+
+
+État 88
+
+   70 exp1: exp1 MOINS . exp2
+
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
+    IDF             décalage et aller à l'état 21
+
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp2      aller à l'état 130
+    exp3      aller à l'état 54
+
+
+État 89
+
+   72 exp2: exp2 MULT . exp3
+
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
+    IDF             décalage et aller à l'état 21
+
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp3      aller à l'état 131
+
+
+État 90
+
+   73 exp2: exp2 DIV . exp3
+
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
+    IDF             décalage et aller à l'état 21
+
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp3      aller à l'état 132
+
+
+État 91
+
+   74 exp2: exp2 MOD . exp3
+
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
+    IDF             décalage et aller à l'état 21
+
+    appel     aller à l'état 48
+    variable  aller à l'état 49
+    exp3      aller à l'état 133
+
+
+État 92
 
    50 liste_arguments: PO PF .
 
     $défaut  réduction par utilisation de la règle 50 (liste_arguments)
 
 
-État 88
+État 93
 
    51 liste_arguments: PO liste_args . PF
    53 liste_args: liste_args . VIRG un_arg
 
-    VIRG  décalage et aller à l'état 126
-    PF    décalage et aller à l'état 127
+    VIRG  décalage et aller à l'état 134
+    PF    décalage et aller à l'état 135
 
 
-État 89
+État 94
 
    52 liste_args: un_arg .
 
     $défaut  réduction par utilisation de la règle 52 (liste_args)
 
 
-État 90
+État 95
 
    54 un_arg: expression .
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
     $défaut  réduction par utilisation de la règle 54 (un_arg)
 
 
-État 91
+État 96
 
    58 variable: IDF CO liste_var . CF var
    61 liste_var: liste_var . VIRG expression
 
-    VIRG  décalage et aller à l'état 128
-    CF    décalage et aller à l'état 129
+    VIRG  décalage et aller à l'état 136
+    CF    décalage et aller à l'état 137
 
 
-État 92
+État 97
 
    60 liste_var: expression .
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
     $défaut  réduction par utilisation de la règle 60 (liste_var)
 
 
-État 93
+État 98
 
    58 variable: IDF . CO liste_var CF var
    59         | IDF . var
 
-    CO  décalage et aller à l'état 55
-    P   décalage et aller à l'état 56
+    CO  décalage et aller à l'état 58
+    P   décalage et aller à l'état 59
 
     $défaut  réduction par utilisation de la règle 63 (var)
 
-    var  aller à l'état 58
+    var  aller à l'état 61
 
 
-État 94
+État 99
 
    62 var: P variable .
 
     $défaut  réduction par utilisation de la règle 62 (var)
 
 
-État 95
+État 100
+
+   96 liste_variables: variable .
+
+    $défaut  réduction par utilisation de la règle 96 (liste_variables)
+
+
+État 101
+
+   90 fonc_pre: LIRE PO liste_variables . PF
+   95 liste_variables: liste_variables . VIRG variable
+
+    VIRG  décalage et aller à l'état 138
+    PF    décalage et aller à l'état 139
+
+
+État 102
+
+   94 format: CSTE_CHAINE .
+
+    $défaut  réduction par utilisation de la règle 94 (format)
+
+
+État 103
+
+   91 fonc_pre: ECRIRE PO format . suite_ecriture PF
+
+    VIRG  décalage et aller à l'état 140
+
+    $défaut  réduction par utilisation de la règle 93 (suite_ecriture)
+
+    suite_ecriture  aller à l'état 141
+
+
+État 104
 
     8 suite_liste_inst: suite_liste_inst instruction PV .
 
     $défaut  réduction par utilisation de la règle 8 (suite_liste_inst)
 
 
-État 96
+État 105
 
    57 affectation: variable OPAFF expression .
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
     $défaut  réduction par utilisation de la règle 57 (affectation)
 
 
-État 97
-
-   15 suite_declaration_type: TABLEAU . dimension DE nom_type
-
-    CO  décalage et aller à l'état 130
-
-    dimension  aller à l'état 131
-
-
-État 98
-
-   14 suite_declaration_type: STRUCT . liste_champs FSTRUCT
-
-    IDF  décalage et aller à l'état 132
-
-    liste_champs  aller à l'état 133
-    un_champ      aller à l'état 134
-
-
-État 99
-
-   13 declaration_type: TYPE IDF DP suite_declaration_type .
-
-    $défaut  réduction par utilisation de la règle 13 (declaration_type)
-
-
-État 100
-
-   25 type_simple: ENTIER .
-
-    $défaut  réduction par utilisation de la règle 25 (type_simple)
-
-
-État 101
-
-   26 type_simple: REEL .
-
-    $défaut  réduction par utilisation de la règle 26 (type_simple)
-
-
-État 102
-
-   27 type_simple: BOOLEEN .
-
-    $défaut  réduction par utilisation de la règle 27 (type_simple)
-
-
-État 103
-
-   28 type_simple: CARACTERE .
-
-    $défaut  réduction par utilisation de la règle 28 (type_simple)
-
-
-État 104
-
-   29 type_simple: CHAINE . CO CSTE_ENTIERE CF
-
-    CO  décalage et aller à l'état 135
-
-
-État 105
-
-   24 nom_type: IDF .
-
-    $défaut  réduction par utilisation de la règle 24 (nom_type)
-
-
 État 106
 
-   30 declaration_variable: VARIABLE liste_IDF DP nom_type .
+   14 declaration_type: TYPE IDF DP TABLEAU . dimension DE nom_type
 
-    $défaut  réduction par utilisation de la règle 30 (declaration_variable)
+    CO  décalage et aller à l'état 142
+
+    dimension  aller à l'état 143
 
 
 État 107
 
-   23 nom_type: type_simple .
+   13 declaration_type: TYPE IDF DP STRUCT . liste_champs FSTRUCT
 
-    $défaut  réduction par utilisation de la règle 23 (nom_type)
+    IDF  décalage et aller à l'état 144
+
+    liste_champs  aller à l'état 145
+    un_champ      aller à l'état 146
 
 
 État 108
 
-   32 liste_IDF: liste_IDF VIRG IDF .
+   24 type_simple: ENTIER .
 
-    $défaut  réduction par utilisation de la règle 32 (liste_IDF)
+    $défaut  réduction par utilisation de la règle 24 (type_simple)
 
 
 État 109
 
-   35 liste_parametres: PO PF .
+   25 type_simple: REEL .
 
-    $défaut  réduction par utilisation de la règle 35 (liste_parametres)
+    $défaut  réduction par utilisation de la règle 25 (type_simple)
 
 
 État 110
 
-   39 un_param: IDF . DP type_simple
+   26 type_simple: BOOLEEN .
 
-    DP  décalage et aller à l'état 136
+    $défaut  réduction par utilisation de la règle 26 (type_simple)
 
 
 État 111
 
-   36 liste_parametres: PO liste_param . PF
-   38 liste_param: liste_param . PV un_param
+   27 type_simple: CARACTERE .
 
-    PV  décalage et aller à l'état 137
-    PF  décalage et aller à l'état 138
+    $défaut  réduction par utilisation de la règle 27 (type_simple)
 
 
 État 112
 
-   37 liste_param: un_param .
+   28 type_simple: CHAINE . CO CSTE_ENTIERE CF
 
-    $défaut  réduction par utilisation de la règle 37 (liste_param)
+    CO  décalage et aller à l'état 147
 
 
 État 113
 
-   33 declaration_procedure: PROCEDURE IDF liste_parametres corps .
+   23 nom_type: IDF .
 
-    $défaut  réduction par utilisation de la règle 33 (declaration_procedure)
+    $défaut  réduction par utilisation de la règle 23 (nom_type)
 
 
 État 114
 
-   34 declaration_fonction: FONCTION IDF liste_parametres RETOURNE . type_simple corps
+   29 declaration_variable: VARIABLE liste_IDF DP nom_type .
 
-    ENTIER     décalage et aller à l'état 100
-    REEL       décalage et aller à l'état 101
-    BOOLEEN    décalage et aller à l'état 102
-    CARACTERE  décalage et aller à l'état 103
-    CHAINE     décalage et aller à l'état 104
-
-    type_simple  aller à l'état 139
+    $défaut  réduction par utilisation de la règle 29 (declaration_variable)
 
 
 État 115
 
-   56 tant_que: TANT_QUE PO expression PF . FAIRE liste_instructions
+   22 nom_type: type_simple .
 
-    FAIRE  décalage et aller à l'état 140
+    $défaut  réduction par utilisation de la règle 22 (nom_type)
 
 
 État 116
+
+   31 liste_IDF: liste_IDF VIRG IDF .
+
+    $défaut  réduction par utilisation de la règle 31 (liste_IDF)
+
+
+État 117
+
+   34 liste_parametres: PO PF .
+
+    $défaut  réduction par utilisation de la règle 34 (liste_parametres)
+
+
+État 118
+
+   38 un_param: IDF . DP type_simple
+
+    DP  décalage et aller à l'état 148
+
+
+État 119
+
+   35 liste_parametres: PO liste_param . PF
+   37 liste_param: liste_param . PV un_param
+
+    PV  décalage et aller à l'état 149
+    PF  décalage et aller à l'état 150
+
+
+État 120
+
+   36 liste_param: un_param .
+
+    $défaut  réduction par utilisation de la règle 36 (liste_param)
+
+
+État 121
+
+   32 declaration_procedure: PROCEDURE IDF liste_parametres corps .
+
+    $défaut  réduction par utilisation de la règle 32 (declaration_procedure)
+
+
+État 122
+
+   33 declaration_fonction: FONCTION IDF liste_parametres RETOURNE . type_simple corps
+
+    ENTIER     décalage et aller à l'état 108
+    REEL       décalage et aller à l'état 109
+    BOOLEEN    décalage et aller à l'état 110
+    CARACTERE  décalage et aller à l'état 111
+    CHAINE     décalage et aller à l'état 112
+
+    type_simple  aller à l'état 151
+
+
+État 123
+
+   56 tant_que: TANT_QUE PO expression PF . FAIRE liste_instructions
+
+    FAIRE  décalage et aller à l'état 152
+
+
+État 124
 
    76 exp3: PO expression PF .
 
     $défaut  réduction par utilisation de la règle 76 (exp3)
 
 
-État 117
+État 125
 
    55 condition: SI expression ALORS liste_instructions . SINON liste_instructions
 
-    SINON  décalage et aller à l'état 141
+    SINON  décalage et aller à l'état 153
 
 
-État 118
+État 126
 
    65 expression: expression OU exp .
    67 exp: exp . opp_bool exp1
 
-    EGAL       décalage et aller à l'état 75
-    DIFFERENT  décalage et aller à l'état 76
-    SUPERIEUR  décalage et aller à l'état 77
-    INFERIEUR  décalage et aller à l'état 78
-    SUP_EGAL   décalage et aller à l'état 79
-    INF_EGAL   décalage et aller à l'état 80
+    EGAL       décalage et aller à l'état 80
+    DIFFERENT  décalage et aller à l'état 81
+    SUPERIEUR  décalage et aller à l'état 82
+    INFERIEUR  décalage et aller à l'état 83
+    SUP_EGAL   décalage et aller à l'état 84
+    INF_EGAL   décalage et aller à l'état 85
 
     $défaut  réduction par utilisation de la règle 65 (expression)
 
-    opp_bool  aller à l'état 81
+    opp_bool  aller à l'état 86
 
 
-État 119
+État 127
 
    64 expression: expression ET exp .
    67 exp: exp . opp_bool exp1
 
-    EGAL       décalage et aller à l'état 75
-    DIFFERENT  décalage et aller à l'état 76
-    SUPERIEUR  décalage et aller à l'état 77
-    INFERIEUR  décalage et aller à l'état 78
-    SUP_EGAL   décalage et aller à l'état 79
-    INF_EGAL   décalage et aller à l'état 80
+    EGAL       décalage et aller à l'état 80
+    DIFFERENT  décalage et aller à l'état 81
+    SUPERIEUR  décalage et aller à l'état 82
+    INFERIEUR  décalage et aller à l'état 83
+    SUP_EGAL   décalage et aller à l'état 84
+    INF_EGAL   décalage et aller à l'état 85
 
     $défaut  réduction par utilisation de la règle 64 (expression)
 
-    opp_bool  aller à l'état 81
+    opp_bool  aller à l'état 86
 
 
-État 120
+État 128
 
    67 exp: exp opp_bool exp1 .
    69 exp1: exp1 . PLUS exp2
    70     | exp1 . MOINS exp2
 
-    PLUS   décalage et aller à l'état 82
-    MOINS  décalage et aller à l'état 83
+    PLUS   décalage et aller à l'état 87
+    MOINS  décalage et aller à l'état 88
 
     $défaut  réduction par utilisation de la règle 67 (exp)
 
 
-État 121
+État 129
 
    69 exp1: exp1 PLUS exp2 .
    72 exp2: exp2 . MULT exp3
    73     | exp2 . DIV exp3
    74     | exp2 . MOD exp3
 
-    MULT  décalage et aller à l'état 84
-    DIV   décalage et aller à l'état 85
-    MOD   décalage et aller à l'état 86
+    MULT  décalage et aller à l'état 89
+    DIV   décalage et aller à l'état 90
+    MOD   décalage et aller à l'état 91
 
     $défaut  réduction par utilisation de la règle 69 (exp1)
 
 
-État 122
+État 130
 
    70 exp1: exp1 MOINS exp2 .
    72 exp2: exp2 . MULT exp3
    73     | exp2 . DIV exp3
    74     | exp2 . MOD exp3
 
-    MULT  décalage et aller à l'état 84
-    DIV   décalage et aller à l'état 85
-    MOD   décalage et aller à l'état 86
+    MULT  décalage et aller à l'état 89
+    DIV   décalage et aller à l'état 90
+    MOD   décalage et aller à l'état 91
 
     $défaut  réduction par utilisation de la règle 70 (exp1)
 
 
-État 123
+État 131
 
    72 exp2: exp2 MULT exp3 .
 
     $défaut  réduction par utilisation de la règle 72 (exp2)
 
 
-État 124
+État 132
 
    73 exp2: exp2 DIV exp3 .
 
     $défaut  réduction par utilisation de la règle 73 (exp2)
 
 
-État 125
+État 133
 
    74 exp2: exp2 MOD exp3 .
 
     $défaut  réduction par utilisation de la règle 74 (exp2)
 
 
-État 126
+État 134
 
    53 liste_args: liste_args VIRG . un_arg
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    un_arg      aller à l'état 142
-    variable    aller à l'état 46
-    expression  aller à l'état 90
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    un_arg      aller à l'état 154
+    variable    aller à l'état 49
+    expression  aller à l'état 95
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
-État 127
+État 135
 
    51 liste_arguments: PO liste_args PF .
 
     $défaut  réduction par utilisation de la règle 51 (liste_arguments)
 
 
-État 128
+État 136
 
    61 liste_var: liste_var VIRG . expression
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    variable    aller à l'état 46
-    expression  aller à l'état 143
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
-
-
-État 129
-
-   58 variable: IDF CO liste_var CF . var
-
-    P  décalage et aller à l'état 56
-
-    $défaut  réduction par utilisation de la règle 63 (var)
-
-    var  aller à l'état 144
-
-
-État 130
-
-   16 dimension: CO . liste_dimensions CF
-
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
-    IDF             décalage et aller à l'état 21
-
-    liste_dimensions  aller à l'état 145
-    une_dimension     aller à l'état 146
-    appel             aller à l'état 45
-    variable          aller à l'état 46
-    expression        aller à l'état 147
-    exp               aller à l'état 48
-    exp1              aller à l'état 49
-    exp2              aller à l'état 50
-    exp3              aller à l'état 51
-
-
-État 131
-
-   15 suite_declaration_type: TABLEAU dimension . DE nom_type
-
-    DE  décalage et aller à l'état 148
-
-
-État 132
-
-   22 un_champ: IDF . DP nom_type
-
-    DP  décalage et aller à l'état 149
-
-
-État 133
-
-   14 suite_declaration_type: STRUCT liste_champs . FSTRUCT
-   21 liste_champs: liste_champs . un_champ PV
-
-    FSTRUCT  décalage et aller à l'état 150
-    IDF      décalage et aller à l'état 132
-
-    un_champ  aller à l'état 151
-
-
-État 134
-
-   20 liste_champs: un_champ . PV
-
-    PV  décalage et aller à l'état 152
-
-
-État 135
-
-   29 type_simple: CHAINE CO . CSTE_ENTIERE CF
-
-    CSTE_ENTIERE  décalage et aller à l'état 153
-
-
-État 136
-
-   39 un_param: IDF DP . type_simple
-
-    ENTIER     décalage et aller à l'état 100
-    REEL       décalage et aller à l'état 101
-    BOOLEEN    décalage et aller à l'état 102
-    CARACTERE  décalage et aller à l'état 103
-    CHAINE     décalage et aller à l'état 104
-
-    type_simple  aller à l'état 154
+    appel       aller à l'état 48
+    variable    aller à l'état 49
+    expression  aller à l'état 155
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
 État 137
 
-   38 liste_param: liste_param PV . un_param
+   58 variable: IDF CO liste_var CF . var
 
-    IDF  décalage et aller à l'état 110
+    P  décalage et aller à l'état 59
 
-    un_param  aller à l'état 155
+    $défaut  réduction par utilisation de la règle 63 (var)
+
+    var  aller à l'état 156
 
 
 État 138
 
-   36 liste_parametres: PO liste_param PF .
+   95 liste_variables: liste_variables VIRG . variable
 
-    $défaut  réduction par utilisation de la règle 36 (liste_parametres)
+    IDF  décalage et aller à l'état 98
+
+    variable  aller à l'état 157
 
 
 État 139
 
-   34 declaration_fonction: FONCTION IDF liste_parametres RETOURNE type_simple . corps
+   90 fonc_pre: LIRE PO liste_variables PF .
+
+    $défaut  réduction par utilisation de la règle 90 (fonc_pre)
+
+
+État 140
+
+   92 suite_ecriture: VIRG . variable suite_ecriture
+
+    IDF  décalage et aller à l'état 98
+
+    variable  aller à l'état 158
+
+
+État 141
+
+   91 fonc_pre: ECRIRE PO format suite_ecriture . PF
+
+    PF  décalage et aller à l'état 159
+
+
+État 142
+
+   15 dimension: CO . liste_dimensions CF
+
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
+    IDF             décalage et aller à l'état 21
+
+    liste_dimensions  aller à l'état 160
+    une_dimension     aller à l'état 161
+    appel             aller à l'état 48
+    variable          aller à l'état 49
+    expression        aller à l'état 162
+    exp               aller à l'état 51
+    exp1              aller à l'état 52
+    exp2              aller à l'état 53
+    exp3              aller à l'état 54
+
+
+État 143
+
+   14 declaration_type: TYPE IDF DP TABLEAU dimension . DE nom_type
+
+    DE  décalage et aller à l'état 163
+
+
+État 144
+
+   21 un_champ: IDF . DP nom_type
+
+    DP  décalage et aller à l'état 164
+
+
+État 145
+
+   13 declaration_type: TYPE IDF DP STRUCT liste_champs . FSTRUCT
+   20 liste_champs: liste_champs . un_champ PV
+
+    FSTRUCT  décalage et aller à l'état 165
+    IDF      décalage et aller à l'état 144
+
+    un_champ  aller à l'état 166
+
+
+État 146
+
+   19 liste_champs: un_champ . PV
+
+    PV  décalage et aller à l'état 167
+
+
+État 147
+
+   28 type_simple: CHAINE CO . CSTE_ENTIERE CF
+
+    CSTE_ENTIERE  décalage et aller à l'état 168
+
+
+État 148
+
+   38 un_param: IDF DP . type_simple
+
+    ENTIER     décalage et aller à l'état 108
+    REEL       décalage et aller à l'état 109
+    BOOLEEN    décalage et aller à l'état 110
+    CARACTERE  décalage et aller à l'état 111
+    CHAINE     décalage et aller à l'état 112
+
+    type_simple  aller à l'état 169
+
+
+État 149
+
+   37 liste_param: liste_param PV . un_param
+
+    IDF  décalage et aller à l'état 118
+
+    un_param  aller à l'état 170
+
+
+État 150
+
+   35 liste_parametres: PO liste_param PF .
+
+    $défaut  réduction par utilisation de la règle 35 (liste_parametres)
+
+
+État 151
+
+   33 declaration_fonction: FONCTION IDF liste_parametres RETOURNE type_simple . corps
 
     DEBUT      décalage et aller à l'état 3
     TYPE       décalage et aller à l'état 4
@@ -1738,7 +1862,7 @@ opp_bool (95)
     PROCEDURE  décalage et aller à l'état 6
     FONCTION   décalage et aller à l'état 7
 
-    corps                  aller à l'état 156
+    corps                  aller à l'état 171
     liste_declarations     aller à l'état 9
     liste_instructions     aller à l'état 10
     declaration            aller à l'état 11
@@ -1748,262 +1872,294 @@ opp_bool (95)
     declaration_fonction   aller à l'état 15
 
 
-État 140
+État 152
 
    56 tant_que: TANT_QUE PO expression PF FAIRE . liste_instructions
 
     DEBUT  décalage et aller à l'état 3
 
-    liste_instructions  aller à l'état 157
+    liste_instructions  aller à l'état 172
 
 
-État 141
+État 153
 
    55 condition: SI expression ALORS liste_instructions SINON . liste_instructions
 
     DEBUT  décalage et aller à l'état 3
 
-    liste_instructions  aller à l'état 158
+    liste_instructions  aller à l'état 173
 
 
-État 142
+État 154
 
    53 liste_args: liste_args VIRG un_arg .
 
     $défaut  réduction par utilisation de la règle 53 (liste_args)
 
 
-État 143
+État 155
 
    61 liste_var: liste_var VIRG expression .
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
     $défaut  réduction par utilisation de la règle 61 (liste_var)
 
 
-État 144
+État 156
 
    58 variable: IDF CO liste_var CF var .
 
     $défaut  réduction par utilisation de la règle 58 (variable)
 
 
-État 145
+État 157
 
-   16 dimension: CO liste_dimensions . CF
-   18 liste_dimensions: liste_dimensions . VIRG une_dimension
+   95 liste_variables: liste_variables VIRG variable .
 
-    VIRG  décalage et aller à l'état 159
-    CF    décalage et aller à l'état 160
+    $défaut  réduction par utilisation de la règle 95 (liste_variables)
 
 
-État 146
+État 158
 
-   17 liste_dimensions: une_dimension .
+   92 suite_ecriture: VIRG variable . suite_ecriture
 
-    $défaut  réduction par utilisation de la règle 17 (liste_dimensions)
+    VIRG  décalage et aller à l'état 140
+
+    $défaut  réduction par utilisation de la règle 93 (suite_ecriture)
+
+    suite_ecriture  aller à l'état 174
 
 
-État 147
+État 159
 
-   19 une_dimension: expression . PP expression
+   91 fonc_pre: ECRIRE PO format suite_ecriture PF .
+
+    $défaut  réduction par utilisation de la règle 91 (fonc_pre)
+
+
+État 160
+
+   15 dimension: CO liste_dimensions . CF
+   17 liste_dimensions: liste_dimensions . VIRG une_dimension
+
+    VIRG  décalage et aller à l'état 175
+    CF    décalage et aller à l'état 176
+
+
+État 161
+
+   16 liste_dimensions: une_dimension .
+
+    $défaut  réduction par utilisation de la règle 16 (liste_dimensions)
+
+
+État 162
+
+   18 une_dimension: expression . PP expression
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    PP  décalage et aller à l'état 161
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    PP  décalage et aller à l'état 177
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
 
-État 148
+État 163
 
-   15 suite_declaration_type: TABLEAU dimension DE . nom_type
+   14 declaration_type: TYPE IDF DP TABLEAU dimension DE . nom_type
 
-    ENTIER     décalage et aller à l'état 100
-    REEL       décalage et aller à l'état 101
-    BOOLEEN    décalage et aller à l'état 102
-    CARACTERE  décalage et aller à l'état 103
-    CHAINE     décalage et aller à l'état 104
-    IDF        décalage et aller à l'état 105
+    ENTIER     décalage et aller à l'état 108
+    REEL       décalage et aller à l'état 109
+    BOOLEEN    décalage et aller à l'état 110
+    CARACTERE  décalage et aller à l'état 111
+    CHAINE     décalage et aller à l'état 112
+    IDF        décalage et aller à l'état 113
 
-    nom_type     aller à l'état 162
-    type_simple  aller à l'état 107
-
-
-État 149
-
-   22 un_champ: IDF DP . nom_type
-
-    ENTIER     décalage et aller à l'état 100
-    REEL       décalage et aller à l'état 101
-    BOOLEEN    décalage et aller à l'état 102
-    CARACTERE  décalage et aller à l'état 103
-    CHAINE     décalage et aller à l'état 104
-    IDF        décalage et aller à l'état 105
-
-    nom_type     aller à l'état 163
-    type_simple  aller à l'état 107
+    nom_type     aller à l'état 178
+    type_simple  aller à l'état 115
 
 
-État 150
+État 164
 
-   14 suite_declaration_type: STRUCT liste_champs FSTRUCT .
+   21 un_champ: IDF DP . nom_type
 
-    $défaut  réduction par utilisation de la règle 14 (suite_declaration_type)
+    ENTIER     décalage et aller à l'état 108
+    REEL       décalage et aller à l'état 109
+    BOOLEEN    décalage et aller à l'état 110
+    CARACTERE  décalage et aller à l'état 111
+    CHAINE     décalage et aller à l'état 112
+    IDF        décalage et aller à l'état 113
 
-
-État 151
-
-   21 liste_champs: liste_champs un_champ . PV
-
-    PV  décalage et aller à l'état 164
-
-
-État 152
-
-   20 liste_champs: un_champ PV .
-
-    $défaut  réduction par utilisation de la règle 20 (liste_champs)
+    nom_type     aller à l'état 179
+    type_simple  aller à l'état 115
 
 
-État 153
+État 165
 
-   29 type_simple: CHAINE CO CSTE_ENTIERE . CF
+   13 declaration_type: TYPE IDF DP STRUCT liste_champs FSTRUCT .
 
-    CF  décalage et aller à l'état 165
-
-
-État 154
-
-   39 un_param: IDF DP type_simple .
-
-    $défaut  réduction par utilisation de la règle 39 (un_param)
+    $défaut  réduction par utilisation de la règle 13 (declaration_type)
 
 
-État 155
+État 166
 
-   38 liste_param: liste_param PV un_param .
+   20 liste_champs: liste_champs un_champ . PV
 
-    $défaut  réduction par utilisation de la règle 38 (liste_param)
-
-
-État 156
-
-   34 declaration_fonction: FONCTION IDF liste_parametres RETOURNE type_simple corps .
-
-    $défaut  réduction par utilisation de la règle 34 (declaration_fonction)
+    PV  décalage et aller à l'état 180
 
 
-État 157
+État 167
+
+   19 liste_champs: un_champ PV .
+
+    $défaut  réduction par utilisation de la règle 19 (liste_champs)
+
+
+État 168
+
+   28 type_simple: CHAINE CO CSTE_ENTIERE . CF
+
+    CF  décalage et aller à l'état 181
+
+
+État 169
+
+   38 un_param: IDF DP type_simple .
+
+    $défaut  réduction par utilisation de la règle 38 (un_param)
+
+
+État 170
+
+   37 liste_param: liste_param PV un_param .
+
+    $défaut  réduction par utilisation de la règle 37 (liste_param)
+
+
+État 171
+
+   33 declaration_fonction: FONCTION IDF liste_parametres RETOURNE type_simple corps .
+
+    $défaut  réduction par utilisation de la règle 33 (declaration_fonction)
+
+
+État 172
 
    56 tant_que: TANT_QUE PO expression PF FAIRE liste_instructions .
 
     $défaut  réduction par utilisation de la règle 56 (tant_que)
 
 
-État 158
+État 173
 
    55 condition: SI expression ALORS liste_instructions SINON liste_instructions .
 
     $défaut  réduction par utilisation de la règle 55 (condition)
 
 
-État 159
+État 174
 
-   18 liste_dimensions: liste_dimensions VIRG . une_dimension
+   92 suite_ecriture: VIRG variable suite_ecriture .
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    $défaut  réduction par utilisation de la règle 92 (suite_ecriture)
+
+
+État 175
+
+   17 liste_dimensions: liste_dimensions VIRG . une_dimension
+
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    une_dimension  aller à l'état 166
-    appel          aller à l'état 45
-    variable       aller à l'état 46
-    expression     aller à l'état 147
-    exp            aller à l'état 48
-    exp1           aller à l'état 49
-    exp2           aller à l'état 50
-    exp3           aller à l'état 51
+    une_dimension  aller à l'état 182
+    appel          aller à l'état 48
+    variable       aller à l'état 49
+    expression     aller à l'état 162
+    exp            aller à l'état 51
+    exp1           aller à l'état 52
+    exp2           aller à l'état 53
+    exp3           aller à l'état 54
 
 
-État 160
+État 176
 
-   16 dimension: CO liste_dimensions CF .
+   15 dimension: CO liste_dimensions CF .
 
-    $défaut  réduction par utilisation de la règle 16 (dimension)
+    $défaut  réduction par utilisation de la règle 15 (dimension)
 
 
-État 161
+État 177
 
-   19 une_dimension: expression PP . expression
+   18 une_dimension: expression PP . expression
 
-    PO              décalage et aller à l'état 39
-    CSTE_ENTIERE    décalage et aller à l'état 40
-    CSTE_REEL       décalage et aller à l'état 41
-    CSTE_BOOLEEN    décalage et aller à l'état 42
-    CSTE_CARACTERE  décalage et aller à l'état 43
-    CSTE_CHAINE     décalage et aller à l'état 44
+    PO              décalage et aller à l'état 42
+    CSTE_ENTIERE    décalage et aller à l'état 43
+    CSTE_REEL       décalage et aller à l'état 44
+    CSTE_BOOLEEN    décalage et aller à l'état 45
+    CSTE_CARACTERE  décalage et aller à l'état 46
+    CSTE_CHAINE     décalage et aller à l'état 47
     IDF             décalage et aller à l'état 21
 
-    appel       aller à l'état 45
-    variable    aller à l'état 46
-    expression  aller à l'état 167
-    exp         aller à l'état 48
-    exp1        aller à l'état 49
-    exp2        aller à l'état 50
-    exp3        aller à l'état 51
+    appel       aller à l'état 48
+    variable    aller à l'état 49
+    expression  aller à l'état 183
+    exp         aller à l'état 51
+    exp1        aller à l'état 52
+    exp2        aller à l'état 53
+    exp3        aller à l'état 54
 
 
-État 162
+État 178
 
-   15 suite_declaration_type: TABLEAU dimension DE nom_type .
+   14 declaration_type: TYPE IDF DP TABLEAU dimension DE nom_type .
 
-    $défaut  réduction par utilisation de la règle 15 (suite_declaration_type)
-
-
-État 163
-
-   22 un_champ: IDF DP nom_type .
-
-    $défaut  réduction par utilisation de la règle 22 (un_champ)
+    $défaut  réduction par utilisation de la règle 14 (declaration_type)
 
 
-État 164
+État 179
 
-   21 liste_champs: liste_champs un_champ PV .
+   21 un_champ: IDF DP nom_type .
 
-    $défaut  réduction par utilisation de la règle 21 (liste_champs)
-
-
-État 165
-
-   29 type_simple: CHAINE CO CSTE_ENTIERE CF .
-
-    $défaut  réduction par utilisation de la règle 29 (type_simple)
+    $défaut  réduction par utilisation de la règle 21 (un_champ)
 
 
-État 166
+État 180
 
-   18 liste_dimensions: liste_dimensions VIRG une_dimension .
+   20 liste_champs: liste_champs un_champ PV .
 
-    $défaut  réduction par utilisation de la règle 18 (liste_dimensions)
+    $défaut  réduction par utilisation de la règle 20 (liste_champs)
 
 
-État 167
+État 181
 
-   19 une_dimension: expression PP expression .
+   28 type_simple: CHAINE CO CSTE_ENTIERE CF .
+
+    $défaut  réduction par utilisation de la règle 28 (type_simple)
+
+
+État 182
+
+   17 liste_dimensions: liste_dimensions VIRG une_dimension .
+
+    $défaut  réduction par utilisation de la règle 17 (liste_dimensions)
+
+
+État 183
+
+   18 une_dimension: expression PP expression .
    64 expression: expression . ET exp
    65           | expression . OU exp
 
-    OU  décalage et aller à l'état 73
-    ET  décalage et aller à l'état 74
+    OU  décalage et aller à l'état 78
+    ET  décalage et aller à l'état 79
 
-    $défaut  réduction par utilisation de la règle 19 (une_dimension)
+    $défaut  réduction par utilisation de la règle 18 (une_dimension)

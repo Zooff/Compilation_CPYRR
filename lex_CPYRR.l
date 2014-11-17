@@ -1,8 +1,6 @@
 %{
 
 #include "include.h"
-#include "grammaire_CPYRR.tab.h"
-
 
 int nb_ligne = 1;
 %}
@@ -80,8 +78,8 @@ vide {return(VIDE);}
 \"[^\"]*\" {return(CSTE_CHAINE);}
 
 
-[a-zA-Z][a-zA-Z0-9_]* {lexstockage(yytext);/*if (lexstockage(yytext) == -1)
-                                        yyerror("Table lexicographique pleine");*/
+[a-zA-Z][a-zA-Z0-9_]* {if (lexstockage(yytext) == -1)
+                                        yyerror("Table lexicographique pleine");
                                       return(IDF);}
 
 ~[a-zA-Z]*~|~[a-zA-Z]*_[a-zA-Z0-9]*~ {return(PROG);}

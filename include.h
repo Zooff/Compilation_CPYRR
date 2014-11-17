@@ -7,7 +7,7 @@
 #include <string.h>
 
 /*fichier hashcode*/
-#include "hcode/lexhashcode.h"
+#include "lexhashcode.h"
 
 /*fichier arbre*/
 #include "xmalloc.h"
