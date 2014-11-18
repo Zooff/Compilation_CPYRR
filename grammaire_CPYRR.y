@@ -9,13 +9,12 @@
 
 /* Variable table lexicographique */
 
-structlexhc tablelexico[MAX];
-int lexhashtab[31];
-//int numlex=4;
+extern structlexhc tablelexico[MAX]; // Tableau qui contient tout les IDF possible
+extern int lexhashtab[31]; // tableau qui contient le premier element des 32 cas possible pour le hashcode
+extern int numlex;  // numero lexicographique comence a 4
 
 /* ------- ------ */
-
-TabDecla tabDecla[DECLARATION_MAX];
+ extern TabDecla tabDecla[DECLARATION_MAX];
 
 int nb_region = 1;
 
@@ -88,6 +87,11 @@ int nb_region = 1;
 
 %token LIRE ECRIRE
 
+/* --------------------------------------------------------------------------------- */
+
+
+
+
 
 %%
 
@@ -123,12 +127,12 @@ declaration : declaration_type
 
 declaration_type : TYPE IDF DP STRUCT liste_champs FSTRUCT
   {
-     if (ajouterDeclaStruct(4) == -1)
+     if (ajouterDeclaStruct($2) == -1)
        yyerror("Table Decla pleine");
   }
                            | TYPE IDF DP TABLEAU dimension DE nom_type
   {
-     if (ajouterDeclaTab(4) == -1)
+     if (ajouterDeclaTab($2) == -1)
        yyerror("Table Decla pleine");
   }
                            ;
@@ -177,25 +181,26 @@ type_simple : ENTIER
 declaration_variable : VARIABLE decla_suite_var
                      ;
 
-decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar(4) == -1)
+decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar($1) == -1)
                                                            yyerror("Table Decla pleine");}
-                        | IDF VIRG decla_suite_var {if (ajouterDeclaVar(4) == -1)
+                        | IDF VIRG decla_suite_var {if (ajouterDeclaVar($1) == -1)
                                                                      yyerror("Table Decla pleine");}
           ;
 
 /* FONCTION/PROCEDURE */
 
-declaration_procedure : PROCEDURE IDF liste_parametres corps
+declaration_procedure : PROCEDURE {nb_region++;} IDF liste_parametres corps
   {
-    if(ajouterDeclaProc(4) == -1)
+    if(ajouterDeclaProc($2) == -1)
       yyerror("Table Decla pleine");
   }
                       ;
 
-declaration_fonction : FONCTION IDF liste_parametres RETOURNE type_simple corps
+declaration_fonction : FONCTION  IDF liste_parametres RETOURNE type_simple corps
   {
-    if (ajouterDeclaFonct(4) == -1)
+    if (ajouterDeclaFonct($2) == -1)
       yyerror("Table Decla pleine");
+
   }
                      ;
 
@@ -309,7 +314,7 @@ exp3 : PO expression PF {$$ = $2;}
      | CSTE_REEL
      | CSTE_CARACTERE
      | CSTE_CHAINE
-     | CSTE_BOOLEEN
+     | CSTE_BOOLEEN 
      | appel {$$ = $1;}
      | variable {$$ = $1;}
      ;
@@ -349,12 +354,16 @@ int main(){
  initTabDecla();
 
 
- printf( "-------- Début Compil --------");
+ printf( "-------- Début Compil -------- \n");
+
+ printf("%d\n", numlex);
 
  if ( yyparse() != 0 ) {
    fprintf(stderr,"Syntaxe incorrecte\n");
-   return 1;
+   return -1;
  }
+
  affiche_lextab(tablelexico);
  afficheTabDecla(tabDecla);
+
 }

@@ -30,19 +30,19 @@ void inittab(int* tab,int n) //fonction qui initialise tout les case du tableau 
 	}
         tablelexico[0].numerolex=0;
         tablelexico[0].longueur=strlen("entier");
-        tablelexico[0].chaine="entier";
+        strcpy(tablelexico[0].chaine,"entier");
         tablelexico[0].suivant=-1;
         tablelexico[1].numerolex=1;
         tablelexico[1].longueur=strlen("réel");
-        tablelexico[1].chaine="réel";
+        strcpy(tablelexico[1].chaine,"réel");
         tablelexico[1].suivant=-1;
         tablelexico[2].numerolex=2;
         tablelexico[2].longueur=strlen("booléen");
-        tablelexico[2].chaine="booléen";
+        strcpy(tablelexico[2].chaine,"booléen");
         tablelexico[2].suivant=-1;
         tablelexico[3].numerolex=3;
         tablelexico[3].longueur=strlen("char");
-        tablelexico[3].chaine="char";
+        strcpy(tablelexico[3].chaine,"char");
         tablelexico[3].suivant=-1;
 
 }
@@ -57,7 +57,7 @@ int lexstockage( char* idf)
 	{
 		tablelexico[numlex].numerolex=numlex;
 		tablelexico[numlex].longueur=strlen(idf);
-		tablelexico[numlex].chaine=idf;
+		strcpy(tablelexico[numlex].chaine,idf);
 		tablelexico[numlex].suivant=-1;
 		lexhashtab[numhashcode]=numlex;
 		numlex++;
@@ -75,13 +75,13 @@ int lexstockage( char* idf)
 	  	{
 			tablelexico[a].suivant = numlex;
 			tablelexico[numlex].numerolex=numlex;
-		  	tablelexico[numlex].longueur=strlen(idf);
-		  	tablelexico[numlex].chaine=idf;
-		  	tablelexico[numlex].suivant=-1;
-		  	numlex++;
+		  tablelexico[numlex].longueur=strlen(idf);
+		  strcpy(tablelexico[numlex].chaine,idf);
+		  tablelexico[numlex].suivant=-1;
+		  numlex++;
 			return numlex-1;
 		}
-		else // cas si la chaine est deja dans le tableau
+		else if (strcmp(tablelexico[a].chaine, idf) ==0) // cas si la chaine est deja dans le tableau
 		{
 			return tablelexico[a].numerolex;
 		}
@@ -101,7 +101,7 @@ void affiche_lextab (structlexhc tab[])
 	printf("\n/* --------------tablelexico---------- */\n");
 	printf("numlex : longueur : suivant :  chaine     |\n");
 	for (i=0;i<numlex;i++)
-	printf(" %d    :      %d  :   %d    :   %s  \n",tab[i].numerolex, tab[i].longueur, tab[i].suivant, tab[i].chaine);
+	fprintf(stderr, " %d    :      %d  :   %d    :   %s  \n",tab[i].numerolex, tab[i].longueur, tab[i].suivant, tab[i].chaine);
 	printf("/* -------------------------------- */ \n\n");
 }
 

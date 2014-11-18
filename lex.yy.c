@@ -1070,33 +1070,33 @@ YY_RULE_SETUP
 case 48:
 YY_RULE_SETUP
 #line 74 "lex_CPYRR.l"
-{return(CSTE_ENTIERE);}
+{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine"); return(CSTE_ENTIERE);}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 75 "lex_CPYRR.l"
-{return(CSTE_REEL);}
+{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_REEL);}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 76 "lex_CPYRR.l"
-{return(CSTE_BOOLEEN);}
+{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_BOOLEEN);}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 77 "lex_CPYRR.l"
-{return(CSTE_CARACTERE);}
+{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_CARACTERE);}
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
 #line 78 "lex_CPYRR.l"
-{return(CSTE_CHAINE);}
+{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_CHAINE);}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 81 "lex_CPYRR.l"
-{if (lexstockage(yytext) == -1)
+{if ((yylval = lexstockage(yytext)) == -1)
                                         yyerror("Table lexicographique pleine");
                                       return(IDF);}
 	YY_BREAK

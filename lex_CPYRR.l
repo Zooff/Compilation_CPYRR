@@ -71,14 +71,14 @@ vide {return(VIDE);}
 "||" {return(OU);}
 "&&" {return(ET);}
 
-0|[1-9][0-9]* {return(CSTE_ENTIERE);}
-0|[1-9][0-9]*\.[0-9]+ {return(CSTE_REEL);}
-"true"|"false" {return(CSTE_BOOLEEN);}
-\'[a-zA-Z]\' {return(CSTE_CARACTERE);}
-\"[^\"]*\" {return(CSTE_CHAINE);}
+0|[1-9][0-9]* {if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine"); return(CSTE_ENTIERE);}
+0|[1-9][0-9]*\.[0-9]+ {if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_REEL);}
+"true"|"false" {if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_BOOLEEN);}
+\'[a-zA-Z]\' {if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_CARACTERE);}
+\"[^\"]*\" {if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_CHAINE);}
 
 
-[a-zA-Z][a-zA-Z0-9_]* {if (lexstockage(yytext) == -1)
+[a-zA-Z][a-zA-Z0-9_]* {if ((yylval = lexstockage(yytext)) == -1)
                                         yyerror("Table lexicographique pleine");
                                       return(IDF);}
 
@@ -88,7 +88,7 @@ vide {return(VIDE);}
 \/\*([^\"\*\/]|\*|(\**\"[^\"]*\"))*\*+\/ { int i =0;
                                                         for (i=0;yytext[i] != '\0';i++)
                                                           if (yytext[i] = '\n')
-                                                            ++nb_ligne;
+                                                            nb_ligne++;
                                                     };
 \/\/.* ;
 \"\"~.* ;

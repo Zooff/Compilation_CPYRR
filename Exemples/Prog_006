@@ -2,6 +2,9 @@
 
 //Exemple d'utilisation de fonction
 
+var a : int;
+var b : int;
+
 function maFonction (x : int ; y : int) return int
 begin
 	x := x + 2;
@@ -13,14 +16,11 @@ end;
 
 function maFonction2 (a : float ; b : float) return float
 var c : float;
-begin	
+begin
 	 c := a / b;
 	 return c;
 end;
 
-
-var a : int;
-var b : int;
 
 begin
 	a := 5;

@@ -4,18 +4,18 @@
 
 #include "include.h"
 
-
+typedef struct structlexhc // structure table lexicografique
+{
+	int numerolex;
+	int longueur;
+	char chaine[256];
+	int suivant;
+} structlexhc;
 
 
 int lexhc(char* lexeme); // fonction qui calcule le hashcode de la chaine
 
-typedef struct structlexhc // structure table lexicografique
-{
-	int numerolex;
-  int longueur;
-	char* chaine;
-	int suivant;
-} structlexhc;
+
 
 
 /* -------------------------------------------------------------------------- */

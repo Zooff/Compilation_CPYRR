@@ -190,7 +190,7 @@ void afficheTabDecla(TabDecla tab[])
 
   printf("\n-----Table des déclarations-----\n");
   printf(" Numlex\t|Nature\t|Suivant|Région\t| Description\t| Exécution\n");
-  for (i=0 ; i<nbDecla+1 ; i++)
+  for (i=0 ; i<nbDecla+2 ; i++)
     printf(" %d\t| %d\t| %d\t| %d\t| %d\t\t| -1\n",i, tab[i].nature, tab[i].suivant, tab[i].region, tab[i].description);
 
   if(positionDebordement > DEBUT_DEBORDEMENT)
