@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "arbre_abstrait.h"
 
 arbre creer_node(int chaine, int numl, int numd){
@@ -15,7 +14,7 @@ arbre creer_node(int chaine, int numl, int numd){
 }
 
 arbre creer_node_cste_ent(int numl, int numd){
-  arbre node = creer_node(AA_CSTE_ENTIERE, numl, numd);
+  arbre node = creer_node(AA_CSTE_INT, numl, numd);
   return node;
 }
 
@@ -30,12 +29,12 @@ arbre creer_node_cste_bool(int numl, int numd){
 }
 
 arbre creer_node_cste_char(int numl, int numd){
-  arbre node = creer_node(AA_CSTE_CHAR);
+  arbre node = creer_node(AA_CSTE_CHAR, numl, numd);
   return node;
 }
 
 arbre creer_node_cste_string(int numl, int numd){
-  arbre node = creer_node(AA_CSTE_STRING);
+  arbre node = creer_node(AA_CSTE_STRING, numl, numd);
   return node;
 }
 
@@ -86,7 +85,7 @@ void afficher_arbre(arbre a){
 
 /* Débuggage */
 
-int main(int argc, char **argv){
+/*int main(int argc, char **argv){
 
   arbre t, t1, t2;
 
@@ -100,3 +99,4 @@ int main(int argc, char **argv){
 
   return 0;
 }
+*/

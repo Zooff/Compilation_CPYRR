@@ -6,21 +6,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*fichier hashcode*/
+/*fichier Table Lexicographique*/
 #include "lexhashcode.h"
 
-/*fichier decla*/
+/*fichier Table Déclaration*/
 #include "decla.h"
 
-/*fichier arbre*/
+/*fichier Arbre Abstrait*/
 #include "xmalloc.h"
 #include "arbre_abstrait.h"
 
 /*fichier pile*/
 #include "pile.h"
 
+/* Fichier Auto Généré Yacc */
 #include "grammaire_CPYRR.tab.h"
 
+/* Taille des tables */
 #define MAX 1000
 
 

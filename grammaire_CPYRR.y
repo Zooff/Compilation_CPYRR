@@ -42,7 +42,7 @@ int nb_region = 1;
 
 %token ENTIER REEL BOOLEEN CARACTERE CHAINE
 
- /* Mots clé */
+ /* Mots cl� */
 
 %token TANT_QUE FAIRE
 %token SI ALORS SINON
@@ -57,17 +57,17 @@ int nb_region = 1;
 
 %token VIDE
 
- /* Opérateur */
+ /* Op�rateur */
 
 %token PLUS MOINS MULT DIV MOD
 
- /* Opérateur booleen */
+ /* Op�rateur booleen */
 
 %token EGAL DIFFERENT
 %token SUPERIEUR INFERIEUR
 %token SUP_EGAL INF_EGAL
 
- /* Opérateur logique */
+ /* Op�rateur logique */
 
 %token OU ET
 
@@ -89,14 +89,30 @@ int nb_region = 1;
 
 /* --------------------------------------------------------------------------------- */
 
+%union{
+struct noeud * type1;
+int type2;
+}
 
+
+%type <type1> expression exp exp1 exp2 exp3
+%type <type1> corps liste_instructions suite_liste_inst nom_type type_simple
+%type <type1> decla_suite_var instruction fonc_pre suite_ecriture
+%type <type1> condition tant_que affectation declaration_procedure
+%type <type1> appel liste_arguments liste_args un_arg resultat_retourne
+
+%type <type1> variable liste_var var
+
+
+%type <type2> IDF CSTE_BOOLEEN CSTE_ENTIERE CSTE_REEL CSTE_CARACTERE CSTE_CHAINE
+%type <type2> opp_bool
 
 
 
 %%
 
  /*******************************************************/
- /*                  GRAMMAIRE CPYYR                    */
+ /*                         GRAMMAIRE CPYYR                             */
  /*******************************************************/
 
 programme : PROG corps
@@ -166,14 +182,14 @@ un_champ : IDF DP nom_type
 /* TYPE */
 
 nom_type : type_simple {$$ = $1;}
-         | IDF {$$  = $1;}
+         | IDF {$$  = creer_node(AA_IDF, -1, -1);}
          ;
 
-type_simple : ENTIER
-            | REEL
-            | BOOLEEN
-            | CARACTERE
-            | CHAINE CO CSTE_ENTIERE CF
+type_simple : ENTIER {$$ = creer_node(AA_TB_INT, -1, -1);}
+            | REEL {$$ = creer_node(AA_TB_FLOAT, -1, -1);}
+            | BOOLEEN {$$ = creer_node(AA_TB_BOOL, -1, -1);}
+            | CARACTERE {$$ = creer_node(AA_TB_CHAR, -1, -1);}
+            | CHAINE CO CSTE_ENTIERE CF {$$ = creer_node(AA_TB_STRING, -1, -1);}
             ;
 
 /* ----------- */
@@ -182,23 +198,25 @@ declaration_variable : VARIABLE decla_suite_var
                      ;
 
 decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar($1) == -1)
-                                                           yyerror("Table Decla pleine");}
+                                                           yyerror("Table Decla pleine");
+                                                        $$ = $3;}
                         | IDF VIRG decla_suite_var {if (ajouterDeclaVar($1) == -1)
-                                                                     yyerror("Table Decla pleine");}
+                                                                     yyerror("Table Decla pleine");
+                                                                    $$ = $3;}
           ;
 
 /* FONCTION/PROCEDURE */
 
 declaration_procedure : PROCEDURE {nb_region++;} IDF liste_parametres corps
   {
-    if(ajouterDeclaProc($2) == -1)
+    if(ajouterDeclaProc($3) == -1)
       yyerror("Table Decla pleine");
   }
                       ;
 
-declaration_fonction : FONCTION  IDF liste_parametres RETOURNE type_simple corps
+declaration_fonction : FONCTION {nb_region++;}  IDF liste_parametres RETOURNE type_simple corps
   {
-    if (ajouterDeclaFonct($2) == -1)
+    if (ajouterDeclaFonct($3) == -1)
       yyerror("Table Decla pleine");
 
   }
@@ -221,23 +239,23 @@ instruction : affectation
             | condition {$$ = $1;}
             | tant_que {$$ = $1;}
             | declaration_procedure {$$ = $1;}
-            | appel
-            | VIDE
-            | RETOURNE resultat_retourne
-            | fonc_pre
+            | appel {$$ = $1;}
+            | VIDE {$$ = creer_node(AA_VIDE, -1, -1);}
+            | RETOURNE resultat_retourne {$$ = creer_node(AA_RETURN, -1, -1);}
+            | fonc_pre {$$ = $1;}
             ;
 
-resultat_retourne :
-                  | expression
-		  ;
+resultat_retourne : {$$ = NULL;}
+                            | expression {$$ = $1;}
+		                        ;
 
 
 /* APPEL FONCTION */
 
-appel : IDF liste_arguments
+appel : IDF liste_arguments {$$ = concat_fils(creer_node(AA_APPEL_FCT, -1, -1), $2);}
       ;
 
-liste_arguments : PO PF {/*$$ = NULL;*/}
+liste_arguments : PO PF {$$ = NULL;}
                 | PO liste_args PF {$$ = $2;}
 		;
 
@@ -254,89 +272,95 @@ un_arg : expression {$$ = $1;}
 /* STRUCTURE CONDITIONNEL */
 
 condition : SI expression ALORS liste_instructions SINON liste_instructions
+  {
+     $$ = concat_fils(concat_frere(creer_node(AA_SI, -1, -1), concat_frere($2,$4)), concat_frere(creer_node(AA_ALORS, -1, -1), $6));
+}
           ;
 
 tant_que : TANT_QUE PO expression PF FAIRE liste_instructions
+  {
+     $$ = concat_fils(creer_node(AA_TANT_QUE, -1, -1), concat_frere($3, $6));
+}
          ;
 
 /* -------- */
 
 /* AFFECTATION */
 
-affectation : variable OPAFF expression
+affectation : variable OPAFF expression {$$ = concat_fils(creer_node(AA_AFFECT, -1, -1), concat_frere($1,$3));}
             ;
 
-                                  /* A définir */
+                                  /* A d�finir */
 
 
 /* VARIABLE */
 
 
 
-variable : IDF CO liste_var CF var
-         | IDF var
-         ;
+variable : IDF CO liste_var CF var {$$ = concat_frere(concat_fils(creer_node(AA_TAB, -1 ,-1), $3), $5);}
+             | IDF var {$$ = concat_frere($$, $2);}
+             ;
 
-liste_var : expression
-          | liste_var VIRG expression
+liste_var : expression {$$ = $1;}
+          | liste_var VIRG expression {$$ = concat_frere($$, $1);}
           ;
 
-var : P variable
-    |
+var : P variable {$$ = concat_frere($$, $2);}
+    | {$$ = NULL;}
     ;
 
 /* ---------- */
 
 /* EXPRESSION */
 
-expression : expression ET exp
-           | expression OU exp
+expression : expression ET exp {$$ = concat_fils(creer_node(AA_ET,-1,-1), concat_frere($1,$3));}
+           | expression OU exp {$$ = concat_fils(creer_node(AA_OU,-1,-1), concat_frere($1,$3));}
            | exp {$$ = $1;}
            ;
 
-exp : exp opp_bool exp1
+exp : exp opp_bool exp1 {$$ = concat_fils(creer_node($2,-1,-1), concat_frere($1,$3));}
     | exp1 {$$ = $1;}
     ;
 
-exp1 : exp1 PLUS exp2
-     | exp1 MOINS exp2
+exp1 : exp1 PLUS exp2 {$$ = concat_fils(creer_node(AA_PLUS,-1,-1), concat_frere($1,$3));}
+     | exp1 MOINS exp2 {$$ = concat_fils(creer_node(AA_MOINS,-1,-1), concat_frere($1,$3));}
      | exp2 {$$ = $1;}
      ;
 
-exp2 : exp2 MULT exp3
-     | exp2 DIV exp3
-     | exp2 MOD exp3
-     | exp3 {$$ = $1;}
-     ;
+exp2 : exp2 MULT exp3 {$$ = concat_fils(creer_node(AA_MULT,-1,-1), concat_frere($1,$3));}
+         | exp2 DIV exp3 {$$ = concat_fils(creer_node(AA_DIV,-1,-1), concat_frere($1,$3));}
+         | exp2 MOD exp3 {$$ = concat_fils(creer_node(AA_MOD, -1, -1), concat_frere($1,$3));}
+         | exp3 {$$ = $1;}
+         ;
 
 exp3 : PO expression PF {$$ = $2;}
-     | CSTE_ENTIERE
-     | CSTE_REEL
-     | CSTE_CARACTERE
-     | CSTE_CHAINE
-     | CSTE_BOOLEEN 
+     | CSTE_ENTIERE {$$ = creer_node_cste_ent($1, $1);}
+     | CSTE_REEL {$$ = creer_node_cste_reel($1, $1);}
+     | CSTE_CARACTERE {$$ = creer_node_cste_char($1,$1);}
+     | CSTE_CHAINE {$$ = creer_node_cste_string($1,$1);}
+     | CSTE_BOOLEEN {$$ = creer_node_cste_bool($1, $1);}
      | appel {$$ = $1;}
      | variable {$$ = $1;}
      ;
 
-opp_bool : EGAL
-         | DIFFERENT
-         | SUPERIEUR
-         | INFERIEUR
-         | SUP_EGAL
-         | INF_EGAL
+opp_bool : EGAL {$$ = AA_EGAL;}
+         | DIFFERENT {$$ = AA_DIFF;}
+         | SUPERIEUR {$$ = AA_SUPP;}
+         | INFERIEUR {$$ = AA_DIFF;}
+         | SUP_EGAL  {$$ =AA_SUPP_EG;}
+         | INF_EGAL {$$ = AA_INF_EG;}
          ;
 
 /* ------------- */
 
 /* FONCTION PREDEFINI */
 
-fonc_pre: LIRE PO liste_variables PF
-        | ECRIRE PO format suite_ecriture PF
+fonc_pre: LIRE PO liste_variables PF {$$ = concat_fils(creer_node(AA_READ,-1,-1), $3);}
+        | ECRIRE PO format suite_ecriture PF {$$ = concat_fils(creer_node(AA_WRITE, -1, -1), concat_frere($3, $4);}
         ;
 
 suite_ecriture: VIRG variable suite_ecriture
-              |
+              | {$$ = NULL;}
               ;
 
 format: CSTE_CHAINE
@@ -354,7 +378,7 @@ int main(){
  initTabDecla();
 
 
- printf( "-------- Début Compil -------- \n");
+ printf( "-------- D�but Compil -------- \n");
 
  printf("%d\n", numlex);
 

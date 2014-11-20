@@ -7,7 +7,7 @@
 
 
 #include "include.h"
-#include "xmalloc.h"
+
 
 /* Operateur */
 
@@ -58,43 +58,61 @@
 #define AA_CSTE_CHAR 26
 #define AA_CSTE_STRING 27
 
-/* Fonction Prédéfini */
+/* Fonction Pr�d�fini */
 
 #define AA_WRITE 28
 #define AA_READ 29
 
+/* Vide */
 
+#define AA_VIDE 30
 
+/* IDF */
+
+#define AA_IDF 31
+
+/* Tableau */
+
+#define AA_TAB 32
+
+/* Type simple */
+
+#define AA_TB_INT 33
+#define AA_TB_FLOAT 34
+#define AA_TB_BOOL 35
+#define AA_TB_CHAR 36
+#define AA_TB_STRING 37
 
 typedef struct noeud {
 
   int nature;  //Nature du noeud ex : "AA_PLUS"
-  int numlex; // Numéro lexicographique
-  int numdecl; // Numéro de déclaration
+  int numlex; // Num�ro lexicographique
+  int numdecl; // Num�ro de d�claration
   struct noeud * frere;
   struct noeud * fils;
 
 } noeud;
 
+
 typedef struct noeud * arbre;
 
 
-// Fonction de création de noeud de l'arbre
+// Fonction de cr�ation de noeud de l'arbre
 arbre creer_node(int chaine, int numl, int numd);
 
-//Fonction qui crée un arbre de nature constante entiere
+//Fonction qui cr�e un arbre de nature constante entiere
 arbre creer_node_cste_ent(int numl, int numd);
 
-//Fonction qui crée un arbre de nature constante flottante
+//Fonction qui cr�e un arbre de nature constante flottante
 arbre creer_node_cste_reel(int numl, int numd);
 
-//Fonction qui crée un arbre de nature constante booleene
+//Fonction qui cr�e un arbre de nature constante booleene
 arbre creer_node_cste_bool(int numl, int numd);
 
-//Fonction qui crée un arbre de nature constante charactere
+//Fonction qui cr�e un arbre de nature constante charactere
 arbre creer_node_cste_char(int numl, int numd);
 
-//Fonction qui crée un arbre de nature constante chaine
+//Fonction qui cr�e un arbre de nature constante chaine
 arbre creer_node_cste_string(int numl, int numd);
 
 //Fonction qui assigne le pointeur fils du pere
@@ -103,7 +121,7 @@ arbre concat_fils(arbre pere, arbre fils1);
 //Fonction qui assigne le pointeur frere du pere
 arbre concat_frere(arbre pere, arbre frere1);
 
-// Fonction de libération de l'arbre
+// Fonction de lib�ration de l'arbre
 void free_arbre(arbre a);
 
 //Fonction d'affichage
