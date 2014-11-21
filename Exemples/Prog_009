@@ -4,27 +4,25 @@
 
 /* Fonction qui prend un int en paramètre et qui retourne ca factorielle */
 
+
+var i : int;
 function factorielle(n : int) return int
 
-	 var fact, i : int;
-	 begin
+	var fact, i : int;
+	begin
 		fact := 1;
 		i := 1;
 		while (i < n) do
-		      begin
+					begin
 			fact := fact * i;
-		      end;
+					end;
 		return (fact);
 	end;
 
-var i : int;
-
 begin
 
-	read(i);
+  read(i);
 	factorielle(i);
-	write("blabla : %d", i);  /* A définir */
+  write("blabla : %d", i);  /* A définir */
 
 end
-		
-		

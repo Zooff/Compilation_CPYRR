@@ -8,14 +8,21 @@
 
 #include "include.h"
 
+/* Type simple */
+
+#define AA_TB_INT 0
+#define AA_TB_FLOAT 1
+#define AA_TB_BOOL 2
+#define AA_TB_CHAR 3
+#define AA_TB_STRING 4
 
 /* Operateur */
 
-#define AA_PLUS 0
-#define AA_MOINS 1
-#define AA_MULT 2
-#define AA_DIV 3
-#define AA_MOD 4
+#define AA_PLUS 33
+#define AA_MOINS 34
+#define AA_MULT 35
+#define AA_DIV 36
+#define AA_MOD 37
 
 /* Comparateur */
 
@@ -75,13 +82,7 @@
 
 #define AA_TAB 32
 
-/* Type simple */
-
-#define AA_TB_INT 33
-#define AA_TB_FLOAT 34
-#define AA_TB_BOOL 35
-#define AA_TB_CHAR 36
-#define AA_TB_STRING 37
+#define AA_P 38
 
 typedef struct noeud {
 
@@ -123,6 +124,8 @@ arbre concat_frere(arbre pere, arbre frere1);
 
 // Fonction de lib�ration de l'arbre
 void free_arbre(arbre a);
+
+char * afficherDefineArbre(int n);
 
 //Fonction d'affichage
 void afficher_arbre(arbre a);

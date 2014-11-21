@@ -3,10 +3,10 @@
 /* Prog_OO2 : Declaration et affectation de variable de type simple */
 
 
-// Déclaration 
+// Déclaration
 
 var i : int;
-var c : char;  
+var c : char;
 var b : bool;
 var s : string[5];
 
@@ -17,5 +17,5 @@ begin
 	i := 2;
 	c := 'c';
 	b := true;
-	s := aaaaa;
+	s := "aaaaa";
 end

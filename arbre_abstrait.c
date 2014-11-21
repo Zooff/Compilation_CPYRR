@@ -70,15 +70,148 @@ void free_arbre(arbre a){
   free(a);
 }
 
-void afficher_arbre(arbre a){
 
-    printf("(%d, %d, %d)", a->nature, a->numlex, a->numdecl);
-    printf("\t");
-    if(a->frere != NULL)
-      afficher_arbre(a->frere);
-    printf("\n\t");
-    if (a->fils != NULL)
-      afficher_arbre(a->fils);
+char* afficherDefineArbre(int n) {
+
+  switch(n) {
+  case 0:
+    return "AA_PLUS";
+    break;
+  case 1:
+    return "AA_MOINS";
+    break;
+  case 2:
+    return "AA_MULT";
+    break;
+  case 3:
+    return "AA_DIV";
+    break;
+  case 4:
+    return "AA_MOD";
+    break;
+  case 5:
+    return "AA_SUPP";
+    break;
+  case 6:
+    return "AA_INF";
+    break;
+  case 7:
+    return "AA_EGAL";
+    break;
+  case 8:
+    return "AA_DIFF";
+    break;
+  case 9:
+    return "AA_SUPP_EG";
+    break;
+  case 10:
+    return "AA_INF_EG";
+    break;
+  case 11:
+    return "AA_ET";
+    break;
+  case 12:
+    return "AA_OU";
+    break;
+  case 13:
+    return "AA_SI";
+    break;
+  case 14:
+    return "AA_ALORS";
+    break;
+  case 15:
+    return "AA_TANT_QUE";
+    break;
+  case 16:
+    return "AA_TABL";
+    break;
+  case 17:
+    return "AA_STRUCT";
+    break;
+  case 18:
+    return "AA_PROC";
+    break;
+  case 19:
+    return "AA_FONC";
+    break;
+  case 20:
+    return "AA_RETURN";
+    break;
+  case 21:
+    return "AA_APPEL_FCT";
+    break;
+  case 22:
+    return "AA_AFFECT";
+    break;
+  case 23:
+    return "AA_CSTE_INT";
+    break;
+  case 24:
+    return "AA_CSTE_FLOAT";
+    break;
+  case 25:
+    return "AA_CSTE_BOOL";
+    break;
+  case 26:
+    return "AA_CSTE_CHAR";
+    break;
+  case 27:
+    return "AA_CSTE_STRING";
+    break;
+  case 28:
+    return "AA_WRITE";
+    break;
+  case 29:
+    return "AA_READ";
+    break;
+  case 30:
+    return "AA_VIDE";
+    break;
+  case 31:
+    return "AA_IDF";
+    break;
+  case 32:
+    return "AA_TAB";
+    break;
+  case 33:
+    return "AA_TB_INT";
+    break;
+  case 34:
+    return "AA_TB_FLOAT";
+    break;
+  case 35:
+    return "AA_TB_BOOL";
+    break;
+  case 36:
+    return "AA_TB_CHAR";
+    break;
+  case 37:
+    return "AA_TB_STRING";
+    break;
+  case 38:
+    return "AA_P";
+    break;
+  default:
+    return "Nombre invalide";
+    break;
+  }
+
+}
+
+
+
+void afficher_arbre(arbre a){
+    if(a != NULL){
+      printf("(%s, %d, %d)",afficherDefineArbre(a->nature), a->numlex, a->numdecl);
+
+      if(a->frere != NULL)
+        printf("\t");
+        afficher_arbre(a->frere);
+
+      if (a->fils != NULL)
+        printf("\n\t");
+        afficher_arbre(a->fils);
+    }
 }
 /* -------------------------------------------------- */
 

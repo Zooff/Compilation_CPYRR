@@ -1,0 +1,12 @@
+~Prog_000~
+
+var i : int;
+var a : int;
+var j : string[3];
+var c : char;
+begin
+  i := true;
+  a := 3;
+  j := "aaa";
+  c := 'e';
+end

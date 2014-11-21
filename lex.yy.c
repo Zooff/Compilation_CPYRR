@@ -1070,83 +1070,93 @@ YY_RULE_SETUP
 case 48:
 YY_RULE_SETUP
 #line 74 "lex_CPYRR.l"
-{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine"); return(CSTE_ENTIERE);}
+{if (yylval.val_i = lexstockage(yytext) ==-1)
+                        yyerror("table lexico pleine");
+                      return(CSTE_ENTIERE);}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 75 "lex_CPYRR.l"
-{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_REEL);}
+#line 77 "lex_CPYRR.l"
+{if (yylval.val_i = lexstockage(yytext) ==-1)
+                                    yyerror("table lexico pleine");
+                                  return(CSTE_REEL);}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 76 "lex_CPYRR.l"
-{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_BOOLEEN);}
+#line 80 "lex_CPYRR.l"
+{if (yylval.val_i = lexstockage(yytext) ==-1)
+                       yyerror("table lexico pleine");
+                      return(CSTE_BOOLEEN);}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 77 "lex_CPYRR.l"
-{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_CARACTERE);}
+#line 83 "lex_CPYRR.l"
+{if (yylval.val_i = lexstockage(yytext) ==-1)
+                    yyerror("table lexico pleine");
+                  return(CSTE_CARACTERE);}
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 78 "lex_CPYRR.l"
-{if (yylval= lexstockage(yytext) ==-1) yyerror("table lexico pleine");return(CSTE_CHAINE);}
+#line 86 "lex_CPYRR.l"
+{if (yylval.val_i = lexstockage(yytext) ==-1)
+                  yyerror("table lexico pleine");
+               return(CSTE_CHAINE);}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 81 "lex_CPYRR.l"
-{if ((yylval = lexstockage(yytext)) == -1)
+#line 91 "lex_CPYRR.l"
+{if ((yylval.val_i = lexstockage(yytext)) == -1)
                                         yyerror("Table lexicographique pleine");
                                       return(IDF);}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 85 "lex_CPYRR.l"
+#line 95 "lex_CPYRR.l"
 {return(PROG);}
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 88 "lex_CPYRR.l"
+#line 98 "lex_CPYRR.l"
 { int i =0;
                                                         for (i=0;yytext[i] != '\0';i++)
                                                           if (yytext[i] = '\n')
-                                                            ++nb_ligne;
+                                                            nb_ligne++;
                                                     };
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 93 "lex_CPYRR.l"
+#line 103 "lex_CPYRR.l"
 ;
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 94 "lex_CPYRR.l"
+#line 104 "lex_CPYRR.l"
 ;
 	YY_BREAK
 case 58:
 /* rule 58 can match eol */
 YY_RULE_SETUP
-#line 96 "lex_CPYRR.l"
+#line 106 "lex_CPYRR.l"
 {nb_ligne++ ;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 98 "lex_CPYRR.l"
+#line 108 "lex_CPYRR.l"
 ;
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 99 "lex_CPYRR.l"
+#line 109 "lex_CPYRR.l"
 {return (yyerror("Symbole inattendu"));}
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 101 "lex_CPYRR.l"
+#line 111 "lex_CPYRR.l"
 ECHO;
 	YY_BREAK
-#line 1150 "lex.yy.c"
+#line 1160 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2141,7 +2151,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 101 "lex_CPYRR.l"
+#line 111 "lex_CPYRR.l"
 
 
 

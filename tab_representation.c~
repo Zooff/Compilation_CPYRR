@@ -1,0 +1,6 @@
+#include "tab_representation.h"
+
+int numrep=0;
+int tabrep[MAX];
+
+void stockage_representation()

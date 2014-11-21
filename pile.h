@@ -1,6 +1,7 @@
 #ifndef PILE
 #define PILE
 
+#include "include.h"
 
 #define TaillePiles 1000
 
@@ -13,12 +14,14 @@ typedef struct structpile // structure pile
 } structpile;
 
 
+int  est_vide(structpile* pile);
 
 void init_pile(structpile* pile);//fonction qui initialise la pile
 
 void empile(structpile* pile,int elem); //fonction qui empile un element dans le tableau
 
-void depile(structpile* pile);//fonction qui depile le tableau d'un element
+int depile(structpile* pile);//fonction qui depile le tableau d'un element
 
+void inverse(structpile* pile);//fonction qui inverse la pile
 
 #endif

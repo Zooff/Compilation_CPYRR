@@ -22,6 +22,9 @@
 /* Fichier Auto Généré Yacc */
 #include "grammaire_CPYRR.tab.h"
 
+/*Fichier tab repre */
+#include "tab_representation.h"
+
 /* Taille des tables */
 #define MAX 1000
 

@@ -15,7 +15,10 @@ extern int numlex;  // numero lexicographique comence a 4
 
 /* ------- ------ */
  extern TabDecla tabDecla[DECLARATION_MAX];
-
+ extern structpile pile_representation;
+ extern int tab_representation[MAX];
+ extern int numrep;
+arbre a;
 int nb_region = 1;
 
 %}
@@ -91,21 +94,21 @@ int nb_region = 1;
 
 %union{
 struct noeud * type1;
-int type2;
+int val_i;
 }
 
 
 %type <type1> expression exp exp1 exp2 exp3
-%type <type1> corps liste_instructions suite_liste_inst nom_type type_simple
-%type <type1> decla_suite_var instruction fonc_pre suite_ecriture
+%type <type1> corps liste_instructions suite_liste_inst
+%type <type1>  instruction fonc_pre suite_ecriture format liste_variables
 %type <type1> condition tant_que affectation declaration_procedure
 %type <type1> appel liste_arguments liste_args un_arg resultat_retourne
+%type <type1> variable var
 
-%type <type1> variable liste_var var
 
-
-%type <type2> IDF CSTE_BOOLEEN CSTE_ENTIERE CSTE_REEL CSTE_CARACTERE CSTE_CHAINE
-%type <type2> opp_bool
+%type <val_i> IDF CSTE_BOOLEEN CSTE_ENTIERE CSTE_REEL CSTE_CARACTERE CSTE_CHAINE
+%type <val_i> opp_bool liste_parametres liste_param nom_type type_simple decla_suite_var
+%type <val_i> liste_champs un_champ
 
 
 
@@ -115,7 +118,7 @@ int type2;
  /*                         GRAMMAIRE CPYYR                             */
  /*******************************************************/
 
-programme : PROG corps
+programme : PROG corps {a = $2;}
           ;
 
 corps : liste_declarations liste_instructions {$$ = $2;}
@@ -130,7 +133,7 @@ liste_instructions : DEBUT suite_liste_inst FIN {$$ = $2;}
                    ;
 
 suite_liste_inst : instruction PV {$$ = $1;}
-                 | suite_liste_inst instruction PV
+                 | suite_liste_inst instruction PV {$$ = concat_frere($1, $2);}
                  ;
 
 /* DECLARATION */
@@ -143,7 +146,8 @@ declaration : declaration_type
 
 declaration_type : TYPE IDF DP STRUCT liste_champs FSTRUCT
   {
-     if (ajouterDeclaStruct($2) == -1)
+     empile(&pile_representation,$5);
+     if (ajouterDeclaStruct($2,stock_rep(&pile_representation, numrep) ) == -1)
        yyerror("Table Decla pleine");
   }
                            | TYPE IDF DP TABLEAU dimension DE nom_type
@@ -170,11 +174,11 @@ une_dimension : expression PP expression
 
 /* STRUCT */
 
-liste_champs : un_champ PV
-             | liste_champs un_champ PV
+liste_champs : un_champ PV {$$ = 1;}
+             | liste_champs un_champ PV {$$ = $1 + 1;}
              ;
 
-un_champ : IDF DP nom_type
+un_champ : IDF DP nom_type {stockage_representation($1,$3);}
          ;
 
 /* ----------- */
@@ -182,14 +186,14 @@ un_champ : IDF DP nom_type
 /* TYPE */
 
 nom_type : type_simple {$$ = $1;}
-         | IDF {$$  = creer_node(AA_IDF, -1, -1);}
+         | IDF {$$  = $1;}
          ;
 
-type_simple : ENTIER {$$ = creer_node(AA_TB_INT, -1, -1);}
-            | REEL {$$ = creer_node(AA_TB_FLOAT, -1, -1);}
-            | BOOLEEN {$$ = creer_node(AA_TB_BOOL, -1, -1);}
-            | CARACTERE {$$ = creer_node(AA_TB_CHAR, -1, -1);}
-            | CHAINE CO CSTE_ENTIERE CF {$$ = creer_node(AA_TB_STRING, -1, -1);}
+type_simple : ENTIER {$$ = AA_TB_INT;}
+            | REEL {$$ = AA_TB_FLOAT;}
+            | BOOLEEN {$$ = AA_TB_BOOL;}
+            | CARACTERE {$$ = AA_TB_CHAR;}
+            | CHAINE CO CSTE_ENTIERE CF {$$ = AA_TB_STRING;}
             ;
 
 /* ----------- */
@@ -197,10 +201,10 @@ type_simple : ENTIER {$$ = creer_node(AA_TB_INT, -1, -1);}
 declaration_variable : VARIABLE decla_suite_var
                      ;
 
-decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar($1) == -1)
+decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar($1, $3) == -1)
                                                            yyerror("Table Decla pleine");
                                                         $$ = $3;}
-                        | IDF VIRG decla_suite_var {if (ajouterDeclaVar($1) == -1)
+                        | IDF VIRG decla_suite_var {if (ajouterDeclaVar($1, $3) == -1)
                                                                      yyerror("Table Decla pleine");
                                                                     $$ = $3;}
           ;
@@ -209,39 +213,39 @@ decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar($1) == -1)
 
 declaration_procedure : PROCEDURE {nb_region++;} IDF liste_parametres corps
   {
-    if(ajouterDeclaProc($3) == -1)
+    if(ajouterDeclaProc($3, stock_rep(&pile_representation, numrep)) == -1)
       yyerror("Table Decla pleine");
   }
                       ;
 
-declaration_fonction : FONCTION {nb_region++;}  IDF liste_parametres RETOURNE type_simple corps
+declaration_fonction : FONCTION {nb_region++;}  IDF liste_parametres{empile(&pile_representation,$4);} RETOURNE type_simple corps
   {
-    if (ajouterDeclaFonct($3) == -1)
+    if (ajouterDeclaFonct($3, stock_rep(&pile_representation, numrep)) == -1)
       yyerror("Table Decla pleine");
 
   }
                      ;
 
-liste_parametres : PO PF
-                 | PO liste_param PF
+liste_parametres : PO PF {$$ = 0;}
+                 | PO liste_param PF {$$ = $2;}
 		 ;
 
-liste_param : un_param
-            | liste_param PV un_param
+liste_param : un_param {$$ = 1;}
+            | liste_param PV un_param { $$ = $1 + 1;}
             ;
 
-un_param : IDF DP type_simple
+un_param : IDF DP type_simple {stockage_representation($1,$3);}
          ;
 
 /* -------------- */
 
-instruction : affectation
+instruction : affectation {$$ = $1;}
             | condition {$$ = $1;}
             | tant_que {$$ = $1;}
             | declaration_procedure {$$ = $1;}
             | appel {$$ = $1;}
             | VIDE {$$ = creer_node(AA_VIDE, -1, -1);}
-            | RETOURNE resultat_retourne {$$ = creer_node(AA_RETURN, -1, -1);}
+            | RETOURNE resultat_retourne {$$ = concat_fils(creer_node(AA_RETURN, -1, -1),$2);}
             | fonc_pre {$$ = $1;}
             ;
 
@@ -260,7 +264,7 @@ liste_arguments : PO PF {$$ = NULL;}
 		;
 
 liste_args : un_arg {$$ = $1;}
-           | liste_args VIRG un_arg
+           | liste_args VIRG un_arg {$$ = concat_frere($1,$3);}
            ;
 
 un_arg : expression {$$ = $1;}
@@ -297,15 +301,12 @@ affectation : variable OPAFF expression {$$ = concat_fils(creer_node(AA_AFFECT, 
 
 
 
-variable : IDF CO liste_var CF var {$$ = concat_frere(concat_fils(creer_node(AA_TAB, -1 ,-1), $3), $5);}
-             | IDF var {$$ = concat_frere($$, $2);}
+variable :  IDF var {$$ = concat_frere(creer_node(AA_IDF, $1, $1), $2);}
              ;
 
-liste_var : expression {$$ = $1;}
-          | liste_var VIRG expression {$$ = concat_frere($$, $1);}
-          ;
 
-var : P variable {$$ = concat_frere($$, $2);}
+var : CO expression CF var {$$ = concat_frere(concat_fils(creer_node(AA_TAB, -1 ,-1), $2), $4);}
+    | P variable {$$ = concat_frere(creer_node(AA_P, -1 ,-1), $2);}
     | {$$ = NULL;}
     ;
 
@@ -356,26 +357,29 @@ opp_bool : EGAL {$$ = AA_EGAL;}
 /* FONCTION PREDEFINI */
 
 fonc_pre: LIRE PO liste_variables PF {$$ = concat_fils(creer_node(AA_READ,-1,-1), $3);}
-        | ECRIRE PO format suite_ecriture PF {$$ = concat_fils(creer_node(AA_WRITE, -1, -1), concat_frere($3, $4);}
+        | ECRIRE PO format suite_ecriture PF {$$ = concat_fils(creer_node(AA_WRITE, -1, -1), concat_frere($3, $4));}
         ;
 
-suite_ecriture: VIRG variable suite_ecriture
+suite_ecriture: VIRG expression suite_ecriture {$$ = concat_frere($2,$3);}
               | {$$ = NULL;}
               ;
 
-format: CSTE_CHAINE
+format: CSTE_CHAINE {creer_node_cste_string($1, $1);}
       ;
 
-liste_variables: liste_variables VIRG variable
-               | variable
+liste_variables: liste_variables VIRG variable {$$ = concat_frere($1,$3);}
+               | variable {$$ = $1;}
                ;
 
 %%
 
 int main(){
 
+int i;
  inittab(lexhashtab, 32);
  initTabDecla();
+ init_pile(&pile_representation);
+
 
 
  printf( "-------- D�but Compil -------- \n");
@@ -389,5 +393,8 @@ int main(){
 
  affiche_lextab(tablelexico);
  afficheTabDecla(tabDecla);
+ afficher_arbre( a);
+ printf("\n");
+ afficher_tabrep(tab_representation);
 
 }

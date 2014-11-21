@@ -34,7 +34,7 @@ void initTabDecla()
 }
 
 
-int ajouterDeclaStruct(int numLexico)
+int ajouterDeclaStruct(int numLexico, int numeroDescription)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
@@ -47,6 +47,7 @@ int ajouterDeclaStruct(int numLexico)
       tabDecla[numLexico].nature = TD_STRUCT;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
       nbDecla++;
     }
   else
@@ -58,6 +59,7 @@ int ajouterDeclaStruct(int numLexico)
       tabDecla[positionDebordement].nature = TD_STRUCT;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
       positionDebordement++;
     }
     return 0;
@@ -94,7 +96,7 @@ int ajouterDeclaTab(int numLexico)
 }
 
 
-int ajouterDeclaVar(int numLexico)
+int ajouterDeclaVar(int numLexico, int numeroDescription)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
@@ -107,6 +109,7 @@ int ajouterDeclaVar(int numLexico)
       tabDecla[numLexico].nature = TD_VAR;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
       nbDecla++;
     }
   else
@@ -118,13 +121,14 @@ int ajouterDeclaVar(int numLexico)
       tabDecla[positionDebordement].nature = TD_VAR;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
       positionDebordement++;
     }
     return 0;
 }
 
 
-int ajouterDeclaProc(int numLexico)
+int ajouterDeclaProc(int numLexico,int numeroDescription)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
@@ -137,6 +141,8 @@ int ajouterDeclaProc(int numLexico)
       tabDecla[numLexico].nature = TD_PROC;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
+
       nbDecla++;
     }
   else
@@ -148,13 +154,14 @@ int ajouterDeclaProc(int numLexico)
       tabDecla[positionDebordement].nature = TD_PROC;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
       positionDebordement++;
     }
     return 0;
 }
 
 
-int ajouterDeclaFonct(int numLexico)
+int ajouterDeclaFonct(int numLexico,int numeroDescription)
 {
   if(nbDecla >= DEBUT_DEBORDEMENT)
     {
@@ -167,6 +174,7 @@ int ajouterDeclaFonct(int numLexico)
       tabDecla[numLexico].nature = TD_FONCT;
       tabDecla[numLexico].suivant = -1;
       tabDecla[numLexico].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
       nbDecla++;
     }
   else
@@ -178,6 +186,7 @@ int ajouterDeclaFonct(int numLexico)
       tabDecla[positionDebordement].nature = TD_FONCT;
       tabDecla[positionDebordement].suivant = -1;
       tabDecla[positionDebordement].region = numRegion;
+      tabDecla[numLexico].description = numeroDescription;
       positionDebordement++;
     }
     return 0;
