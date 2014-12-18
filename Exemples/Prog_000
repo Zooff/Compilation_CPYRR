@@ -1,0 +1,6 @@
+~Prog_000~
+
+var j : string[3];
+begin
+  j[0] := 'c';
+end

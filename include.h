@@ -1,34 +1,30 @@
 #ifndef INC
 #define INC
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 /*fichier Table Lexicographique*/
-#include "lexhashcode.h"
+#include "lexhashcode/lexhashcode.h"
 
 /*fichier Table Déclaration*/
-#include "decla.h"
+#include "decla/decla.h"
 
 /*fichier Arbre Abstrait*/
-#include "xmalloc.h"
-#include "arbre_abstrait.h"
+#include "xmalloc/xmalloc.h"
+#include "arbre_abstrait/arbre_abstrait.h"
 
 /*fichier pile*/
-#include "pile.h"
+#include "pile/pile.h"
 
 /* Fichier Auto Généré Yacc */
 #include "grammaire_CPYRR.tab.h"
 
 /*Fichier tab repre */
-#include "tab_representation.h"
+#include "tab_representation/tab_representation.h"
 
 /* Taille des tables */
 #define MAX 1000
-
-
-
 
 #endif

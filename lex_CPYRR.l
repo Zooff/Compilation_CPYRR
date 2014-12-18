@@ -1,11 +1,7 @@
 %{
-
-#include "include.h"
-
+#include "grammaire_CPYRR.tab.h"
 int nb_ligne = 1;
 %}
-
-
 
 %%
 
@@ -71,24 +67,24 @@ vide {return(VIDE);}
 "||" {return(OU);}
 "&&" {return(ET);}
 
-0|[1-9][0-9]* {if (yylval.val_i = lexstockage(yytext) ==-1)
+0|[1-9][0-9]* {if ((yylval.val_i = lexstockage(yytext)) ==-1)
                         yyerror("table lexico pleine");
                       return(CSTE_ENTIERE);}
-0|[1-9][0-9]*\.[0-9]+ {if (yylval.val_i = lexstockage(yytext) ==-1)
+0|[1-9][0-9]*\.[0-9]+ {if ((yylval.val_i = lexstockage(yytext)) ==-1)
                                     yyerror("table lexico pleine");
                                   return(CSTE_REEL);}
-"true"|"false" {if (yylval.val_i = lexstockage(yytext) ==-1)
+"true"|"false" {if ((yylval.val_i = lexstockage(yytext)) ==-1)
                        yyerror("table lexico pleine");
                       return(CSTE_BOOLEEN);}
-\'[a-zA-Z]\' {if (yylval.val_i = lexstockage(yytext) ==-1)
+\'[a-zA-Z]\' {if ((yylval.val_i = lexstockage(yytext)) ==-1)
                     yyerror("table lexico pleine");
                   return(CSTE_CARACTERE);}
-\"[^\"]*\" {if (yylval.val_i = lexstockage(yytext) ==-1)
+\"[^\"]*\" {if ((yylval.val_i = lexstockage(yytext)) ==-1)
                   yyerror("table lexico pleine");
                return(CSTE_CHAINE);}
 
 
-[a-zA-Z][a-zA-Z0-9_]* {if ((yylval.val_i = lexstockage(yytext)) == -1)
+[a-zA-Z][a-zA-Z0-9_]* {if (((yylval.val_i = lexstockage(yytext))) == -1)
                                         yyerror("Table lexicographique pleine");
                                       return(IDF);}
 
@@ -111,9 +107,7 @@ vide {return(VIDE);}
 %%
 
 int yyerror(const char *s)
-
 {
   fprintf(stderr, "Ligne : %d - Erreur : %s\n", nb_ligne, s);
-
   return 1;
 }
