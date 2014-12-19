@@ -30,6 +30,10 @@
     extern structlexhc tablelexico[MAX];
     extern TabRegion tabRegion[REGION_MAX];
 
+    int verifVariable(arbre var,arbre a);
+    extern int yyerror(const char* erreur);
+    int erreur = 0;
+
     %}
 
     /*    TOKEN    */
@@ -104,8 +108,8 @@
 programme : PROG corps {a = $2;}
 ;
 
-corps : liste_declarations liste_instructions {}//afecter $2 dans la table des region en cours
-| liste_instructions {}//afecter $1 dans la table des region en cours
+corps : liste_declarations liste_instructions {$$ = $2;}//afecter $2 dans la table des region en cours
+| liste_instructions {$$ = $1;}//afecter $1 dans la table des region en cours
 ;
 
 liste_declarations : declaration PV
@@ -128,9 +132,10 @@ declaration : declaration_type
 
 declaration_type : TYPE IDF DP STRUCT liste_champs FSTRUCT
 {
-    empile(&pile_representation,$5);
+
+    if(ajouterDeclaStruct($2 ) == -1) yyerror("Table Decla pleine");
 }
-| TYPE IDF DP TABLEAU dimension DE nom_type 
+| TYPE IDF DP TABLEAU dimension DE nom_type
 
 {
     if (ajouterDeclaTab($2,$7) == -1)
@@ -146,8 +151,12 @@ liste_dimensions : une_dimension
 | liste_dimensions VIRG une_dimension
 ;
 
-une_dimension : CSTE_ENTIERE PP CSTE_ENTIERE 
+une_dimension : CSTE_ENTIERE PP CSTE_ENTIERE
 {
+    if(atoi(tablelexico[$3].chaine)-atoi(tablelexico[$1].chaine) < 0){
+       yyerror("Dimension du tableau incorrect");
+       exit(-1);
+}
     empile(&pile_representation, atoi(tablelexico[$1].chaine));
     empile(&pile_representation, atoi(tablelexico[$3].chaine));
 }
@@ -155,11 +164,13 @@ une_dimension : CSTE_ENTIERE PP CSTE_ENTIERE
 ;
 
 /* STRUCT */
-liste_champs : un_champ PV {$$ = 1;}
-| liste_champs un_champ PV {$$ = $1 + 1;}
+liste_champs : un_champ PV {}
+| liste_champs un_champ PV {}
 ;
 
-un_champ : IDF DP nom_type {}
+un_champ : IDF DP nom_type {
+empile(&pile_representation, $1);
+if(ajouterDeclaVar($1, $3)==-1) yyerror("table Decla pleine");}
 ;
 
 /* TYPE */
@@ -167,10 +178,10 @@ nom_type : type_simple {$$ = $1;}
 | IDF {$$  = $1;}
 ;
 
-type_simple : ENTIER {$$ = AA_TB_INT;}
-| REEL {$$ = AA_TB_FLOAT;}
-| BOOLEEN {$$ = AA_TB_BOOL;}
-| CARACTERE {$$ = AA_TB_CHAR;}
+type_simple : ENTIER {$$ = 0;}
+| REEL {$$ = 1;}
+| BOOLEEN {$$ = 2;}
+| CARACTERE {$$ = 3;}
 | CHAINE CO CSTE_ENTIERE CF {$$ = AA_TB_STRING;}
 ;
 
@@ -189,25 +200,35 @@ decla_suite_var : IDF DP nom_type {if (ajouterDeclaVar($1, $3) == -1)
 
 declaration_procedure : PROCEDURE {empile(&pile_region,nbRegion++);nb_imbrication++;} IDF liste_parametres corps
 {
+    ajouterRegion(nb_imbrication,$5);
+    if (ajouterDeclaProc($3) == -1)
+        yyerror("Table Decla pleine");
     nb_imbrication--;
+    depile(&pile_region);
 }
 ;
 
 declaration_fonction : FONCTION {empile(&pile_region,nbRegion++);nb_imbrication++;}  IDF liste_parametres RETOURNE type_simple corps
 {
+    ajouterRegion(nb_imbrication,$7);
+    empile(&pile_representation,$6);
+    if (ajouterDeclaFonct($3) == -1)
+        yyerror("Table Decla pleine");
     nb_imbrication--;
+    depile(&pile_region);
 }
 ;
 
-liste_parametres : PO PF {$$ = 0;}
-| PO liste_param PF {$$ = $2;}
+liste_parametres : PO PF {}
+| PO liste_param PF {}
 ;
 
-liste_param : un_param {$$ = 1;}
-| liste_param PV un_param { $$ = $1 + 1;}
+liste_param : un_param {}
+| liste_param PV un_param {}
 ;
 
-un_param : IDF DP type_simple 
+un_param : IDF DP type_simple{if (ajouterDeclaVar($1, $3) == -1)
+         yyerror("Table Decla pleine");}
 ;
 
 /* -------------- */
@@ -257,6 +278,16 @@ tant_que : TANT_QUE PO expression PF FAIRE liste_instructions
 /* AFFECTATION */
 affectation : variable OPAFF expression
 {
+  if ( verifVariable($1,$3) == -1){
+    yyerror("Erreur d'affectation");
+    erreur = 1;
+    }
+    if (verifVariable($1,$3) == -2){
+      yyerror("Variable non déclaré");
+      erreur = 1;
+    }
+
+
     $$ = concat_fils(creer_node(AA_AFFECT, -1, -1), concat_frere($1,$3));
 }
 ;
@@ -333,6 +364,54 @@ suite_ecriture: VIRG expression suite_ecriture {$$ = concat_fils(creer_node(AA_L
 ;
 %%
 
+
+
+int verifVariable(arbre var,arbre a){
+
+  arbre exp = a;
+  int nature;
+
+ if (tabDecla[var->numlex].description == -1){
+    return -2;
+}
+/*  if (exp->nature == AA_LISTE)
+    exp = exp->fils;
+
+  if(exp->nature == AA_PLUS){
+    exp = exp->frere
+    while (exp->frere != NULL){
+      if (exp->nature == exp->frere->nature)
+        return nature;
+      else
+        return -1;
+    }
+  }*/
+
+
+  if (exp->nature == AA_IDF){
+    nature = tabDecla[exp->numlex].description;
+      if (nature != tabDecla[var->numlex].description)
+        return -1;
+  }
+  if (est_feuille(a)){
+    if(exp->nature == AA_CSTE_INT)
+      nature = 0;
+    if(exp->nature == AA_CSTE_FLOAT)
+      nature = 1;
+    if(exp->nature == AA_CSTE_CHAR)
+      nature = 3;
+    if(exp->nature == AA_CSTE_BOOL)
+      nature = 2;
+    if (exp->nature == AA_IDF)
+      nature = tabDecla[exp->numlex].description;
+
+    fprintf(stderr, "%d", tabDecla[exp->numlex].description);
+    if (nature != tabDecla[var->numlex].description){
+      return -1;
+    }
+  }
+}
+
 int main(){
 
     int i;
@@ -340,15 +419,17 @@ int main(){
     initTabDecla();
     init_pile();
     printf( "-------- Debut Compil -------- \n");
-    printf("%d\n", numlex);
     if ( yyparse() != 0 ) {
-        fprintf(stderr,"Syntaxe incorrecte\n");
         return -1;
     }
-    affiche_lextab(tablelexico);
-    afficheTabDecla(tabDecla);
-    afficheTabRegion(tabRegion);
-        //afficher_arbre( a, 0);
-    printf("\n");
-    afficher_tabrep(tab_representation);
+    if (erreur == 0){
+      affiche_lextab(tablelexico);
+      afficheTabDecla(tabDecla);
+      afficheTabRegion(tabRegion);
+      afficher_tabrep(tab_representation);
+      afficher_arbre( a, 0);
+      printf("\n");
+    }
+    else
+      printf("Compilation Echoue\n");
 }

@@ -1,0 +1,12 @@
+~Prog_013~
+
+/* Affectation non valide */
+
+var x : int;
+var y : float;
+
+begin
+  y := 2;
+  y := x;
+
+end

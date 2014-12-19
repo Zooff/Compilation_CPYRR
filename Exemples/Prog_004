@@ -2,12 +2,18 @@
 
 /* Exemple sur l'initialisation de structures */
 
-type maStruct : struct 
+type maStruct : struct
 x : int;
 y : int;
 fstruct;
 
+type maStruct2 : struct
+v : float;
+w : float;
+fstruct;
+
 var point : maStruct;
+var point2 : maStruct2;
 
 begin
 	point.x := 2;

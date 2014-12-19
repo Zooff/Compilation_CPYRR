@@ -1,0 +1,9 @@
+~Prog_012~
+
+/* Variable non déclaré */
+
+var x : int;
+
+begin
+  y := x + 2;
+end

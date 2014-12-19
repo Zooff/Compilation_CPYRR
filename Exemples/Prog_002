@@ -8,7 +8,8 @@
 var i : int;
 var c : char;
 var b : bool;
-var s : string[5];
+var d : int;
+
 
 begin
 
@@ -17,5 +18,6 @@ begin
 	i := 2;
 	c := 'c';
 	b := true;
-	s := "aaaaa";
+//	d := 0.2;
+
 end

@@ -116,6 +116,8 @@ void afficher_arbre(arbre a, int espace);
 //Fonction dernier fils
 arbre dernier_fils(arbre a);
 
+int est_feuille(arbre a);
+
 //fonction inserer arbre
 void insere_arbre(arbre x , arbre y);
 

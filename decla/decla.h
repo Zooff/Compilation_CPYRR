@@ -30,15 +30,15 @@ typedef struct TabDecla
 
 void initTabDecla(); // Fonction qui initialise le tableau des déclarations dont les 4 premières cases contiennent les types de base
 
-int ajouterDeclaStruct(int numLexico, int numeroDescription); // Fonction qui ajoute une structure dans le tableau des déclarations
+int ajouterDeclaStruct(int numLexico /*int numeroDescription*/); // Fonction qui ajoute une structure dans le tableau des déclarations
 
 int ajouterDeclaTab(int numLexico,int numeroDescription); // Fonction qui ajoute un tableau dans le tableau des déclarations
 
 int ajouterDeclaVar(int numLexico, int numeroDescription); // Fonction qui ajoute une variable dans le tableau des déclarations
 
-int ajouterDeclaProc(int numLexico, int numeroDescription); // Fonction qui ajoute une procédure dans le tableau des déclarations
+int ajouterDeclaProc(int numLexico); // Fonction qui ajoute une procédure dans le tableau des déclarations
 
-int ajouterDeclaFonct(int numLexico, int numeroDescription); // Fonction qui ajoute une fonction dans le tableau des déclarations
+int ajouterDeclaFonct(int numLexico); // Fonction qui ajoute une fonction dans le tableau des déclarations
 
 void afficheTabDecla(TabDecla tab[]); // Fonction qui affiche le tableau des déclarations, avec sa zone de déborbement si besoin
 

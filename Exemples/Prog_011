@@ -1,0 +1,12 @@
+~Prog_011~
+
+/* Tableau impossible */
+
+type tab : array [5..1] of int;
+
+var x : tab;
+
+
+begin
+  vide;
+end

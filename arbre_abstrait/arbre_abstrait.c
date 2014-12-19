@@ -34,6 +34,10 @@ void insere_arbre(arbre x , arbre y)
     }
 }
 
+int est_feuille(arbre a){
+  return (a->fils == NULL && a->frere);
+}
+
 
 arbre creer_node_cste_ent(int numl, int numd){
     arbre node = creer_node(AA_CSTE_INT, numl, numd);
@@ -92,19 +96,19 @@ void free_arbre(arbre a){
 char* afficherDefineArbre(int n) {
 
     switch(n) {
-        case 0:
+        case 33:
             return "AA_PLUS";
             break;
-        case 1:
+        case 34:
             return "AA_MOINS";
             break;
-        case 2:
+        case 35:
             return "AA_MULT";
             break;
-        case 3:
+        case 36:
             return "AA_DIV";
             break;
-        case 4:
+        case 37:
             return "AA_MOD";
             break;
         case 5:
@@ -182,28 +186,28 @@ char* afficherDefineArbre(int n) {
         case 32:
             return "AA_TAB";
             break;
-        case 33:
+        case 0:
             return "AA_TB_INT";
             break;
-        case 34:
+        case 1:
             return "AA_TB_FLOAT";
             break;
-        case 35:
+        case 2:
             return "AA_TB_BOOL";
             break;
-        case 36:
+        case 3:
             return "AA_TB_CHAR";
             break;
-        case 37:
+        case 4:
             return "AA_TB_STRING";
             break;
         case 38:
             return "AA_P";
             break;
         case 39:
-            return "AA_LISTE";   
+            return "AA_LISTE";
             break;
-          
+
         default:
             return "Nombre invalide";
             break;
@@ -231,6 +235,9 @@ void afficher_arbre(arbre a, int espace){
         afficher_arbre(a->fils, espace +2);
     }
 }
+
+
+
 /* -------------------------------------------------- */
 
 

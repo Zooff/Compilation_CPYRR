@@ -6,8 +6,25 @@ int numRegion = 1;
 int positionDebordement = DEBUT_DEBORDEMENT;
 extern TabRegion tabRegion[REGION_MAX];
 extern structpile pile_representation;
+extern structpile pile_region;
 int tab_representation[MAX];
 int numrep=0;
+
+int tailleStruct(){
+  int i, res = 0;
+  for (i = 0; i<pile_representation.nbrelements; i++){
+    res += tabDecla[tabDecla[pile_representation.tabpile[i]].description].execution;
+  }
+  return res;
+}
+int taille_tab()
+{
+    int i=0;
+    int j=1;
+    for(i=0;i<pile_representation.nbrelements-1;i+=2)
+        j*= pile_representation.tabpile[i+1]-pile_representation.tabpile[i];
+    return j;
+}
 
 void initTabDecla()
 {
@@ -31,8 +48,9 @@ void initTabDecla()
 }
 
 
-int ajouterDeclaStruct(int numLexico, int numeroDescription)
+int ajouterDeclaStruct(int numLexico)
 {
+    int i;
     if(nbDecla >= DEBUT_DEBORDEMENT)
     {
         printf("Erreur, plus de mémoire disponible !\n");
@@ -44,7 +62,8 @@ int ajouterDeclaStruct(int numLexico, int numeroDescription)
         tabDecla[numLexico].nature = TD_STRUCT;
         tabDecla[numLexico].suivant = -1;
         tabDecla[numLexico].region = numRegion;
-        tabDecla[numLexico].description = numeroDescription;
+        tabDecla[numLexico].description = numrep;
+        tabDecla[numLexico].execution = tailleStruct();
         nbDecla++;
     }
     else
@@ -56,12 +75,23 @@ int ajouterDeclaStruct(int numLexico, int numeroDescription)
         tabDecla[positionDebordement].nature = TD_STRUCT;
         tabDecla[positionDebordement].suivant = -1;
         tabDecla[positionDebordement].region = numRegion;
-        tabDecla[numLexico].description = numeroDescription;
+        tabDecla[positionDebordement].description = numrep;
+        tabDecla[positionDebordement].execution = tailleStruct();
         positionDebordement++;
     }
+    tab_representation[numrep++] =  pile_representation.nbrelements; //premier element de la tab_rep est le nombre de champs de la struct
+    for(i = 0; i<pile_representation.nbrelements ; i++)
+    {
+        tab_representation[numrep++] =  pile_representation.tabpile[i]; // on copie le tableau de la pile dans le tableau de la tab_rep
+        tab_representation[numrep++] =  tabDecla[pile_representation.tabpile[i]].description;
+        if (i == 0)
+          tab_representation[numrep++] =  0;
+        else
+          tab_representation[numrep++] = tabDecla[pile_representation.tabpile[i]].execution + tab_representation[numrep -4];
+    }
+    pile_representation.nbrelements = 0;//vide la pile des representation pour avoir une pile propre lors de la prochaine declaration d'objet se stockant dans la table des decla
     return 0;
 }
-
 
 int ajouterDeclaTab(int numLexico, int numeroDescription)
 {
@@ -78,7 +108,7 @@ int ajouterDeclaTab(int numLexico, int numeroDescription)
         tabDecla[numLexico].suivant = -1;
         tabDecla[numLexico].region = numRegion;
         tabDecla[numLexico].description = numrep;
-        tabDecla[numLexico].execution = nbDecla++;
+        tabDecla[numLexico].execution = taille_tab()*tabDecla[numeroDescription].execution;
     }
     else
     {
@@ -90,11 +120,13 @@ int ajouterDeclaTab(int numLexico, int numeroDescription)
         tabDecla[positionDebordement].suivant = -1;
         tabDecla[positionDebordement].region = numRegion;
         tabDecla[positionDebordement].description = numrep;
+        tabDecla[positionDebordement].execution = taille_tab()*tabDecla[numeroDescription].execution;
         positionDebordement++;
     }
-    
+
+
     tab_representation[numrep++] =  ((pile_representation.nbrelements)/2); //premier element de la tab_rep est le nombre de dimension du tableau
-    tab_representation[numrep++] = numeroDescription; 
+    tab_representation[numrep++] = numeroDescription; //numeroDescription est le type du tableau
     for(i = 0; i<pile_representation.nbrelements ; i++)
     {
         tab_representation[numrep++] =  pile_representation.tabpile[i]; // on copie le tableau de la pile dans le tableau de la tab_rep
@@ -106,6 +138,7 @@ int ajouterDeclaTab(int numLexico, int numeroDescription)
 
 int ajouterDeclaVar(int numLexico, int numeroDescription)
 {
+
     if(nbDecla >= DEBUT_DEBORDEMENT)
     {
         printf("Erreur, plus de mémoire disponible !\n");
@@ -116,7 +149,7 @@ int ajouterDeclaVar(int numLexico, int numeroDescription)
     {
         tabDecla[numLexico].nature = TD_VAR;
         tabDecla[numLexico].suivant = -1;
-        tabDecla[numLexico].region = numRegion;
+        tabDecla[numLexico].region = region_actuelle();
         tabDecla[numLexico].description = numeroDescription;
         tabDecla[numLexico].execution =tabRegion[region_actuelle()].taille ;
         nbDecla++;
@@ -129,7 +162,7 @@ int ajouterDeclaVar(int numLexico, int numeroDescription)
         tabDecla[numLexico].suivant = positionDebordement;
         tabDecla[positionDebordement].nature = TD_VAR;
         tabDecla[positionDebordement].suivant = -1;
-        tabDecla[positionDebordement].region = numRegion;
+        tabDecla[positionDebordement].region = region_actuelle();
         tabDecla[positionDebordement].description = numeroDescription;
         tabDecla[positionDebordement].execution =tabRegion[region_actuelle()].taille ;
         positionDebordement++;
@@ -139,8 +172,10 @@ int ajouterDeclaVar(int numLexico, int numeroDescription)
 }
 
 
-int ajouterDeclaProc(int numLexico,int numeroDescription)
+int ajouterDeclaProc(int numLexico)
 {
+    int i;
+
     if(nbDecla >= DEBUT_DEBORDEMENT)
     {
         printf("Erreur, plus de mémoire disponible !\n");
@@ -151,9 +186,9 @@ int ajouterDeclaProc(int numLexico,int numeroDescription)
     {
         tabDecla[numLexico].nature = TD_PROC;
         tabDecla[numLexico].suivant = -1;
-        tabDecla[numLexico].region = numRegion;
-        tabDecla[numLexico].description = numeroDescription;
-
+        tabDecla[numLexico].region = pile_region.tabpile[pile_region.nbrelements-2];
+        tabDecla[numLexico].description = numrep;
+        tabDecla[numLexico].execution = pile_region.tabpile[pile_region.nbrelements-1];
         nbDecla++;
     }
     else
@@ -164,16 +199,28 @@ int ajouterDeclaProc(int numLexico,int numeroDescription)
         tabDecla[numLexico].suivant = positionDebordement;
         tabDecla[positionDebordement].nature = TD_PROC;
         tabDecla[positionDebordement].suivant = -1;
-        tabDecla[positionDebordement].region = numRegion;
-        tabDecla[numLexico].description = numeroDescription;
+        tabDecla[positionDebordement].region = pile_region.tabpile[pile_region.nbrelements-2];
+        tabDecla[positionDebordement].description = numrep;
+        tabDecla[positionDebordement].execution =pile_region.tabpile[pile_region.nbrelements-1];
         positionDebordement++;
     }
+
+    tab_representation[numrep++] = pile_representation.nbrelements;
+    for(i = 0; i<pile_representation.nbrelements; i++)
+    {
+        tab_representation[numrep++] = pile_representation.tabpile[i];
+        tab_representation[numrep++] = tabDecla[pile_representation.tabpile[i]].description;
+    }
+    pile_representation.nbrelements = 0;
+
     return 0;
 }
 
 
-int ajouterDeclaFonct(int numLexico,int numeroDescription)
+int ajouterDeclaFonct(int numLexico)
 {
+    int i;
+
     if(nbDecla >= DEBUT_DEBORDEMENT)
     {
         printf("Erreur, plus de mémoire disponible !\n");
@@ -184,8 +231,9 @@ int ajouterDeclaFonct(int numLexico,int numeroDescription)
     {
         tabDecla[numLexico].nature = TD_FONCT;
         tabDecla[numLexico].suivant = -1;
-        tabDecla[numLexico].region = numRegion;
-        tabDecla[numLexico].description = numeroDescription;
+        tabDecla[numLexico].region =  pile_region.tabpile[pile_region.nbrelements-2];
+        tabDecla[numLexico].description = numrep;
+        tabDecla[numLexico].execution =pile_region.tabpile[pile_region.nbrelements-1];
         nbDecla++;
     }
     else
@@ -196,10 +244,21 @@ int ajouterDeclaFonct(int numLexico,int numeroDescription)
         tabDecla[numLexico].suivant = positionDebordement;
         tabDecla[positionDebordement].nature = TD_FONCT;
         tabDecla[positionDebordement].suivant = -1;
-        tabDecla[positionDebordement].region = numRegion;
-        tabDecla[numLexico].description = numeroDescription;
+        tabDecla[positionDebordement].region =  pile_region.tabpile[pile_region.nbrelements-2];
+        tabDecla[positionDebordement].description = numrep;
+        tabDecla[positionDebordement].execution =pile_region.tabpile[pile_region.nbrelements-1];
         positionDebordement++;
     }
+
+    tab_representation[numrep++] = pile_representation.nbrelements-1;
+    for(i = 0; i<pile_representation.nbrelements-1; i++)
+    {
+        tab_representation[numrep++] =  pile_representation.tabpile[i];
+        tab_representation[numrep++] = tabDecla[pile_representation.tabpile[i]].description;
+    }
+    tab_representation[numrep++] = pile_representation.tabpile[pile_representation.nbrelements-1];
+    pile_representation.nbrelements = 0;
+
     return 0;
 }
 
@@ -223,11 +282,11 @@ void afficher_tabrep(){
 
 int association_nom(int numlex)
 {
-    
+
 
 }
 
-    
+
 /*
   int main(int argc, char **argv)
   {
